@@ -1,5 +1,6 @@
 ![Alt text](https://github.com/vinval/JDom/blob/master/logo_small.png?raw=true "JDOM")
 # JDOM INTRODUCTION
+###### v1.0.0
 ## Compile simple javascript/json to obtain html
 ---
 #### First of all declare the script reference into your main html then write your script after the body tag.
