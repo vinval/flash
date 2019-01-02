@@ -80,7 +80,7 @@ JDom([
 #### All properties are optional. By defaul property tag value is div.
 
 ## Special properties
-#### not visible in the elements strucuture inside inspector
+#### not visible in the elements structure inside inspector
 | Property Name | Value Typeof    |
 |---------------|-----------------|
 |tag            |string           |
@@ -91,7 +91,7 @@ JDom([
 #### depends on tag you would to create
 | Property Name | Value Typeof              | Note                                 |
 |---------------|---------------------------|--------------------------------------|
-|id             |string                     |if not declared this is auto generated|
+|id             |string                     |if not declared it is auto generated  |
 |style          |string or animation object |                                      |
 |type           |string                     |                                      |
 |width          |string or number           |reserved to table                     |
@@ -101,12 +101,12 @@ JDom([
 |...            |                           |                                      |
 
 ## Reserved* property
-#### not visible in the elements strucuture inside inspector
+#### not visible in the elements structure inside inspector
 | Property Name | Value Typeof    |
 |---------------|-----------------|
 |element        |HTMLElement      |
 
-###### *JDom has a global object inside his parent (window) who is called jdomGlobal when you retreive each object with element property that contains the real HTMLElement 
+###### *JDom has a global object inside his parent (window) who is called jdomGlobal where you retreive each object with element property that contains the real HTMLElement 
 
 ---
 # FROM OBJECT TO HTMLElement
@@ -139,7 +139,7 @@ JDom([
 
 ---
 # JDOM METHODS
-#### There are two methods that allow you to compile faster your HTML page
+#### Two methods allow you to compile faster your HTML page
 ## JDomConcat
 ```javascript
 // you can use JDomConcat() or __c()
@@ -256,7 +256,7 @@ JDomPrettify()
 |---------------|------------------|------------------|
 |SCREEN         |object            |width:[num]       |
 |               |                  |height:[num]      |
-|SELF           |object       |this child object      |
+|SELF           |object            |this child object |
 
 ```javascript
     {
