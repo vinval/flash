@@ -95,8 +95,8 @@ JDom([
 |id             |string                     |if not declared it is auto generated  |
 |style          |string or animation object |                                      |
 |type           |string                     |                                      |
-|width          |string or number           |reserved to table                     |
-|height         |string or number           |reserved to table                     |
+|width          |string or number           |reserved to table, img, ...           |
+|height         |string or number           |reserved to table, img, ...           |
 |onclick        |string                     |                                      |
 |onkeyup        |string                     |                                      |
 |...            |                           |                                      |
