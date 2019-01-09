@@ -75,12 +75,12 @@ function JDom (dom, doc) {
                                 switch (item) {
                                     case "style": elem[item] = formattingStyle(elem[item], elem, domElement); break;
                                 }
+                                if (elem[item]) domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
                                 switch (item) {
                                     case "html": domElement.innerHTML = domEvaluateString(elem[item], elem); break;
                                 }
                             }
-                            if (elem[item]) domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                         } catch (e) {}
                     })
                     positionInDom.appendChild(domElement);
