@@ -28,6 +28,7 @@
 /*
     JDom(siteStructure [array], domElement [HTMLElement])
     the second argument is optional (if not specified is body)
+    or if declared could be a string (id element) or HTMLElement
 */
 
 JDom([
