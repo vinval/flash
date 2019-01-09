@@ -8,7 +8,11 @@ const SCREEN = {
         || document.body.clientHeight
 }
 function JDom (dom, doc) {
-    doc = doc ? doc : document.body;
+    doc = doc 
+        ? typeof doc === "string"
+            ? document.getElementById(doc)
+            : doc 
+        : document.body;
     doc.innerHTML = ""; 
     domBuilder(dom, doc);
     window.jdomGlobal = dom;
@@ -268,4 +272,8 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
         })
         return transformation.join(" ");
     }
+}
+
+JDom.prototype.prettify = function () {
+    JDomPrettify()
 }
