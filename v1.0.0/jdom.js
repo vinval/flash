@@ -274,6 +274,11 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
     }
 }
 
+
+JDom.prototype.then = function(callback) {
+    return callback(jdomGlobal)
+}
+
 JDom.prototype.prettify = function () {
     JDomPrettify()
 }
