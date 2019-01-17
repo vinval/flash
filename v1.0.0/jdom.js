@@ -129,7 +129,7 @@ function JDom (dom, doc) {
                 if (match) match.map(function(m){
                     item = item.replace(m,"-"+m.toLowerCase());
                 })
-                if (typeof style[itemTmp] === "number") {
+                if (typeof style[itemTmp] === "number" && itemTmp !== "flex") {
                     style[itemTmp] = style[itemTmp]+"px";
                 }
                 if (typeof style[itemTmp] === "string") 
