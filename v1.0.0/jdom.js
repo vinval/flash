@@ -276,21 +276,23 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
 
 const __f = JDomFind = function (id) {
     var found = false
-    function recursive(id, obj, index) {
+    function recursive(id, obj, index, parent) {
         const jg = obj ? obj : window.jdomGlobal;
         var index = index ? index : [];
+            parent = parent ? parent : null;
         if (typeof jg === "object" && jg.length > 0) {
             jg.map(function(e,k){
                 if (e.id === id) {
                     index.push(k);
                     found = {
                         self: e,
-                        path: index
+                        path: index,
+                        parent: parent
                     };
                     return true;
                 } else if (e.childs) {
                     index.push(k);
-                    recursive(id, e.childs, index)
+                    recursive(id, e.childs, index, e)
                 } else {
                     return false
                 }
