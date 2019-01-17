@@ -282,7 +282,7 @@ const __f = JDomFind = function (id) {
         if (typeof jg === "object" && jg.length > 0) {
             jg.map(function(e,k){
                 if (e.id === id) {
-                    //console.log(index)
+                    index.push(k);
                     found = {
                         self: e,
                         path: index
