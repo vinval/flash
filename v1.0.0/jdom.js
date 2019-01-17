@@ -274,6 +274,32 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
     }
 }
 
+const __f = JDomFind = function (id) {
+    var found = false
+    function recursive(id, obj, index) {
+        const jg = obj ? obj : window.jdomGlobal;
+        var index = index ? index : [];
+        if (typeof jg === "object" && jg.length > 0) {
+            jg.map(function(e,k){
+                if (e.id === id) {
+                    //console.log(index)
+                    found = {
+                        self: e,
+                        path: index
+                    };
+                    return true;
+                } else if (e.childs) {
+                    index.push(k);
+                    recursive(id, e.childs, index)
+                } else {
+                    return false
+                }
+            })
+        }
+    }
+    recursive(id);
+    return found
+}
 
 JDom.prototype.then = function(callback) {
     return callback(jdomGlobal)
