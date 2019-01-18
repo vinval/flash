@@ -1,7 +1,7 @@
 const styles = {
     main: {
-        width: "{SCREEN.width}",
-        height: "{SCREEN.height}",
+        width: SCREEN.width,
+        height: SCREEN.height,
         display: "flex",
         justifyContent: "center",
         alignItems: 'center',
@@ -9,11 +9,11 @@ const styles = {
         color: "white"
     },
     child: {
-        width: "{SCREEN.height/3}",
-        height: "{SCREEN.height/3}",
+        width: SCREEN.height/3,
+        height: SCREEN.height/3,
         backgroundColor: '#fff',
         borderRadius: {
-            range: [0,"{SCREEN.height/1.5}"],
+            range: [0,SCREEN.height/1.5],
             duration: 300,
         },
         display: "flex",
