@@ -197,12 +197,25 @@ JDomTransform(
 ## JDomFind
 ```javascript
 /*
-    you can use JDomFind() or __f()
+    you can use JDomFind(#id) or __f()
 */
 
 console.info(JDomFind("ID"))
 ```
 ##### returns an object that contains element based on ID with self, path and parent properties
+## JDomModule
+```javascript
+/*
+    you can use JDomModule("path/to/file") or __m()
+    use of extension is necessary if it isn't json 
+*/
+
+{
+    tag: "input",
+    style: JDomModule("path/to/file"))
+}
+```
+##### returns file callback (json object for example)
 ## JDomPrettify
 ```javascript
 /*
