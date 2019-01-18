@@ -73,6 +73,25 @@ function JDom (dom, doc) {
         }
     }
     
+    function cssPseudoHover (domElement, elem) {
+        var style = {};
+        domElement.addEventListener("mouseenter", function(){
+            style = __f(elem.id).self.element.style || {};
+            __f(elem.id).self.element.style = formattingStyle(
+                __c(style, elem.hover), 
+                elem,
+                domElement
+            )
+        })
+        domElement.addEventListener("mouseleave", function(){
+            __f(elem.id).self.element.style = formattingStyle(
+                style, 
+                elem,
+                domElement
+            )
+        })
+    }
+
     function domBuilder (domObject, positionInDom) {
         try {
             domObject.map(function(elem){
@@ -89,6 +108,7 @@ function JDom (dom, doc) {
                             } else {
                                 switch (item) {
                                     case "html": domElement.innerHTML = domEvaluateString(elem[item], elem); break;
+                                    case "hover": cssPseudoHover(domElement, elem); break;
                                 }
                             }
                         } catch (e) {}
@@ -203,6 +223,10 @@ function JDom (dom, doc) {
             "childs",
             "html",
             "element",
+            "hover",
+            "focus",
+            "active",
+            "visited"
         ];
         if (attrList.indexOf(item)!==-1) 
             return false;
