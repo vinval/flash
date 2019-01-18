@@ -89,6 +89,8 @@ JDom([
 |html           |string           |
 |childs         |array            |
 |hover          |object           |
+|focus          |object           |
+|active         |object           |
 
 ## Standard properties
 #### depends on tag you would to create
@@ -264,6 +266,36 @@ JDomPrettify()
         width: 10
     },
     hover: {
+        width: 100
+    }
+}
+```
+## FOCUS PROPERTY
+#### you can use this to see changes when an element is focused
+| Property Name | Value Typeof    |
+|---------------|-----------------|
+|focus          |object           |
+```javascript
+{
+    style: {
+        width: 10
+    },
+    focus: {
+        width: 100
+    }
+}
+```
+## ACTIVE PROPERTY
+#### you can use this to see changes when an element is actived
+| Property Name | Value Typeof    |
+|---------------|-----------------|
+|active         |object           |
+```javascript
+{
+    style: {
+        width: 10
+    },
+    active: {
         width: 100
     }
 }
