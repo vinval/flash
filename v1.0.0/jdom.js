@@ -27,14 +27,9 @@ function JDom (dom, doc) {
     }
     
     function domObjectObserve() {
-        /*
-        var domTmp = null;
-        setInterval(function(){
-            if (JSON.stringify(domTmp) !== JSON.stringify(jdomGlobal)) {
-                domTmp = jdomGlobal;
-            }
-        },1000)
-        */
+        document.addEventListener("change", function(){
+            JDom(jdomGlobal);
+        })
     }
     
     function domElementsObserve() {
@@ -344,6 +339,37 @@ const __f = JDomFind = function (id) {
     recursive(id);
     return found
 }
+
+const __m = JDomModule = function(filePath) {
+    if (window.location.protocol !== "file:") {
+        const splice = filePath.split(".");
+        const extension = splice.length>1 ? splice[splice.length-1] : "json";
+        // Load json file;
+        function JDomloadTextFileAjaxSync(filePath, mimeType) {
+            var xmlhttp=new XMLHttpRequest();
+            xmlhttp.open("GET",filePath+"."+extension,false);
+            if (mimeType != null) {
+                if (xmlhttp.overrideMimeType) {
+                    xmlhttp.overrideMimeType(mimeType);
+                }
+            }
+            xmlhttp.send();
+            if (xmlhttp.status==200) {
+                return xmlhttp.responseText;
+            }
+            else {
+                // TODO Throw exception
+                return null;
+            }
+        }
+        var json = JDomloadTextFileAjaxSync(filePath, "application/json");
+        // Parse json
+        return JSON.parse(json);
+    } else {
+        console.error("Jdom::", "you cannot use JDomModule outside server");
+        return false;
+    } 
+};
 
 JDom.prototype.then = function(callback) {
     return callback(jdomGlobal)
