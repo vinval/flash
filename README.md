@@ -326,12 +326,12 @@ JDomPrettify()
 # JDOM QUERIES
 #### All properties can be used by query. To do this assign string value to the property with double curly brackets.
 #### In this case you can use the reseved object words like below
-| Reserved Word | Typeof           | Return           |
-|---------------|------------------|------------------|
-|SCREEN         |object            |width:[num]       |
-|               |                  |height:[num]      |
-|SELF           |object            |this child object |
-|PARENT         |object            |this parent object|
+| Reserved Word | Typeof           | Return           |Where is    |
+|---------------|------------------|------------------|------------|
+|SCREEN         |object            |width:[num]       |Public      |
+|               |                  |height:[num]      |            |
+|SELF           |object            |this child object |Private     |
+|PARENT         |object            |this parent object|Private     |
 
 ```javascript
     {
