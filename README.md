@@ -206,8 +206,8 @@ console.info(JDomFind("ID"))
 ## JDomModule
 ```javascript
 /*
-    you can use JDomModule("path/to/file") or __m()
-    use of extension is necessary if it isn't json 
+    you can use JDomModule("path/to/file") or __m() just inside the server
+    use of extension is necessary if it isn't json
 */
 
 {
