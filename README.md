@@ -251,6 +251,23 @@ JDomPrettify()
 }
 ```
 ---
+# JDOM PSEUDO-CLASSES
+## HOVER PROPERTY
+#### you can use this to see changes when mouse gets hover the element and goes outside
+| Property Name | Value Typeof    |
+|---------------|-----------------|
+|hover          |object           |
+```javascript
+{
+    style: {
+        width: 10
+    },
+    hover: {
+        width: 100
+    }
+}
+```
+---
 # JDOM QUERIES
 #### All properties can be used by query. To do this assign string value to the property with double curly brackets.
 #### In this case you can use the reseved object words like below
@@ -324,7 +341,10 @@ JDom([
             {
                 id: "child",
                 html: "Hello JDom!",
-                style: styles.child
+                style: styles.child,
+                hover: {
+                    color: "red"
+                }
             }
         ]
     }
