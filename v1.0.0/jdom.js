@@ -72,7 +72,7 @@ function JDom (dom, doc) {
         var style = {};
         var eventIn, eventOut;
         switch (pseudo) {
-            case "hover": eventIn = "mouseover"; eventOut = "mouseout"; break;
+            case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
             case "focus": eventIn = "focus"; eventOut = "blur"; break;
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
