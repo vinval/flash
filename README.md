@@ -37,8 +37,8 @@ JDom([
 ```
 #### Inside the object you can add others by two properties:
 
-1. html [string] (correspond to HTMLElement.innerHTML)
-2. childs [array] (correspond to HTMLElement.appendChild)
+1. html [string] (equivalent to HTMLElement.innerHTML)
+2. childs [array] (equivalent to HTMLElement.appendChild)
 
 ## html property
 ```javascript
