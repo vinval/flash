@@ -1,4 +1,5 @@
 window.jdomActiveElement = null;
+
 const SCREEN = {
     width:  window.innerWidth
         || document.documentElement.clientWidth
@@ -7,6 +8,7 @@ const SCREEN = {
         || document.documentElement.clientHeight
         || document.body.clientHeight
 }
+
 function JDom (dom, doc) {
     doc = doc 
         ? typeof doc === "string"
@@ -23,6 +25,7 @@ function JDom (dom, doc) {
         ae.focus();
         ae.value = ae.value
     }
+    
     function domObjectObserve() {
         /*
         var domTmp = null;
@@ -33,6 +36,7 @@ function JDom (dom, doc) {
         },1000)
         */
     }
+    
     function domElementsObserve() {
         Array.prototype.slice.call(document.querySelectorAll("input")).map(function(input){
             input.addEventListener('change', function (evt) {
@@ -51,6 +55,7 @@ function JDom (dom, doc) {
             });
         })
     }
+    
     function domVariableSearch(id, value, property, obj) {
         jdomActiveElement = id;
         obj = obj ? obj : window.jdomGlobal;
@@ -67,6 +72,7 @@ function JDom (dom, doc) {
             console.log(e)
         }
     }
+    
     function domBuilder (domObject, positionInDom) {
         try {
             domObject.map(function(elem){
@@ -98,6 +104,7 @@ function JDom (dom, doc) {
                 console.info("JDom:: childs attribute must be array")
             }
         }
+        
         function randomID() {
             const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var id = "";
@@ -105,6 +112,7 @@ function JDom (dom, doc) {
             return id;
         }
     }
+    
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
         var matches = regExp.exec(str);
@@ -120,6 +128,7 @@ function JDom (dom, doc) {
             return str;
         }
     }
+    
     function formattingStyle(style, domObject, domElement) {
         if (typeof style === "string") return domEvaluateString(style, domObject);
         try {
@@ -261,6 +270,7 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
             elem.style.transform = settingMovement (incrementation);
         }
     })
+    
     function settingMovement (inc) {
         var transformation = [];
         Object.keys(movementsObject).map(function(mov){
