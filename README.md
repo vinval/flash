@@ -194,6 +194,15 @@ JDomTransform(
 )
 ```
 ##### provide to animate HTMLElements by style transformation
+## JDomFind
+```javascript
+/*
+    you can use JDomFind() or __f()
+*/
+
+console.info(JDomFind("ID"))
+```
+##### returns element based on ID
 ## JDomPrettify
 ```javascript
 /*
