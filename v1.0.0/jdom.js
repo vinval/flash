@@ -106,11 +106,12 @@ function JDom (dom, doc) {
         }
     }
     function domEvaluateString(str, domObject) {
-        const regExp = /\{([^)]+)\}/;
-        var match = regExp.exec(str);
-        if (match && str.indexOf("SELF")!==-1) {
-            str = str.replace("SELF", "domObject");
-            match = regExp.exec(str);
+        const regExp = /{{(.*?)}}/g;
+        var matches = regExp.exec(str);
+        if (matches && str.indexOf("SELF")!==-1) {
+            str = str.replace(/SELF/g, "__f('"+domObject.id+"').self").replace(/{{/g,"").replace(/}}/g,"");
+            matches = regExp.exec(str);
+            console.log(str);
         }
         try {
             const result = eval(match[1]);
