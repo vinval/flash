@@ -49,6 +49,6 @@ JDomTransform(
     {
         scale: [10,1]
     },
-    150
+    1500
 )
 JDomPrettify();
