@@ -19,7 +19,7 @@ function JDom (dom, doc) {
     domBuilder(dom, doc);
     window.jdomGlobal = dom;
     domElementsObserve();
-    domObjectObserve();
+    //domObjectObserve();
     if (jdomActiveElement) {
         const ae = document.getElementById(jdomActiveElement);
         ae.focus();
