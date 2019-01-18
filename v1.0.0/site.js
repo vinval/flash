@@ -35,7 +35,10 @@ JDom([
             {
                 id: "child",
                 html: "Hello JDom!",
-                style: styles.child
+                style: styles.child,
+                hover: {
+                    color: "red"
+                }
             }
         ]
     }
