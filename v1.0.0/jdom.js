@@ -85,6 +85,7 @@ function JDom (dom, doc) {
             )
         })
         domElement.addEventListener(eventOut, function(){
+            style = __f(elem.id).self.style || {};
             __f(elem.id).self.element.style = formattingStyle(
                 style, 
                 elem,
