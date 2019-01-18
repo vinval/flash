@@ -67,17 +67,18 @@ function JDom (dom, doc) {
             console.log(e)
         }
     }
-    
+
     function cssPseudo (domElement, elem, pseudo) {
         var style = {};
         var eventIn, eventOut;
         switch (pseudo) {
-            case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
+            case "hover": eventIn = "mouseover"; eventOut = "mouseout"; break;
             case "focus": eventIn = "focus"; eventOut = "blur"; break;
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
         domElement.addEventListener(eventIn, function(){
-            style = __f(elem.id).self.element.style || {};
+            style = __f(elem.id).self.style;
+            style = style ?  deformattingStyle(style) : {};
             __f(elem.id).self.element.style = formattingStyle(
                 __c(style, elem[pseudo]),
                 elem,
@@ -85,7 +86,6 @@ function JDom (dom, doc) {
             )
         })
         domElement.addEventListener(eventOut, function(){
-            style = __f(elem.id).self.style || {};
             __f(elem.id).self.element.style = formattingStyle(
                 style, 
                 elem,
@@ -150,6 +150,27 @@ function JDom (dom, doc) {
         } catch (e) {
             return str;
         }
+    }
+        
+    function deformattingStyle (style) {
+        var s = style.split(";");
+        var r = {};
+        s.map(function(e){
+            const prop = e
+                .split(":")[0]
+                .split("-")
+                .map(function(a,k){
+                    if (k>0) 
+                        return a.charAt(0).toUpperCase()+a.substr(1)
+                    else
+                        return a
+                })
+                .join("");
+            const value = e
+                .split(":")[1]
+            r[prop] = value
+        })
+        return r;
     }
     
     function formattingStyle(style, domObject, domElement) {
