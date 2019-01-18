@@ -225,7 +225,7 @@ JDomPrettify()
     style: {
         backgroundColor: "red",
         color: "white",
-        width: "{SCREEN.width}"
+        width: SCREEN.width
     }
 }
 ```
@@ -252,20 +252,21 @@ JDomPrettify()
 ```
 ---
 # JDOM QUERIES
-#### All properties can be used by query. To do this assign string value to the property with curly brackets.
+#### All properties can be used by query. To do this assign string value to the property with double curly brackets.
 #### In this case you can use the reseved object words like below
 | Reserved Word | Typeof           | Return           |
 |---------------|------------------|------------------|
 |SCREEN         |object            |width:[num]       |
 |               |                  |height:[num]      |
 |SELF           |object            |this child object |
+|PARENT         |object            |this parent object|
 
 ```javascript
     {
-        html: "{SELF.id}",
+        html: "{{SELF.id}}",
         style: {
-            width: "{SCREEN.width/2}",
-            height: "{SCREEN.height}"
+            width: SCREEN.width/2,
+            height: SCREEN.height
         }
     }
 ```
@@ -288,8 +289,8 @@ JDomPrettify()
 ```javascript
 const styles = {
     main: {
-        width: "{SCREEN.width}",
-        height: "{SCREEN.height}",
+        width: SCREEN.width,
+        height: SCREEN.height,
         display: "flex",
         justifyContent: "center",
         alignItems: 'center',
@@ -297,11 +298,11 @@ const styles = {
         color: "white"
     },
     child: {
-        width: "{SCREEN.height/3}",
-        height: "{SCREEN.height/3}",
+        width: SCREEN.height/3,
+        height: SCREEN.height/3,
         backgroundColor: '#fff',
         borderRadius: {
-            range: [0,"{SCREEN.height/1.5}"],
+            range: [0,SCREEN.height/1.5],
             duration: 300,
         },
         display: "flex",
