@@ -88,6 +88,7 @@ JDom([
 |tag            |string           |
 |html           |string           |
 |childs         |array            |
+|hover          |object           |
 
 ## Standard properties
 #### depends on tag you would to create
