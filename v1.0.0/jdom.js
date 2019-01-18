@@ -73,17 +73,23 @@ function JDom (dom, doc) {
         }
     }
     
-    function cssPseudoHover (domElement, elem) {
+    function cssPseudo (domElement, elem, pseudo) {
         var style = {};
-        domElement.addEventListener("mouseenter", function(){
+        var eventIn, eventOut;
+        switch (pseudo) {
+            case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
+            case "focus": eventIn = "focus"; eventOut = "blur"; break;
+            case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
+        };
+        domElement.addEventListener(eventIn, function(){
             style = __f(elem.id).self.element.style || {};
             __f(elem.id).self.element.style = formattingStyle(
-                __c(style, elem.hover), 
+                __c(style, elem[pseudo]),
                 elem,
                 domElement
             )
         })
-        domElement.addEventListener("mouseleave", function(){
+        domElement.addEventListener(eventOut, function(){
             __f(elem.id).self.element.style = formattingStyle(
                 style, 
                 elem,
@@ -108,7 +114,9 @@ function JDom (dom, doc) {
                             } else {
                                 switch (item) {
                                     case "html": domElement.innerHTML = domEvaluateString(elem[item], elem); break;
-                                    case "hover": cssPseudoHover(domElement, elem); break;
+                                    case "hover": cssPseudo (domElement, elem, "hover"); break;
+                                    case "focus": cssPseudo (domElement, elem, "focus"); break;
+                                    case "active": cssPseudo (domElement, elem, "active"); break;
                                 }
                             }
                         } catch (e) {}
