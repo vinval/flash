@@ -202,7 +202,7 @@ JDomTransform(
 
 console.info(JDomFind("ID"))
 ```
-##### returns element based on ID
+##### returns an object that contains element based on ID with self, path and parent properties
 ## JDomPrettify
 ```javascript
 /*
