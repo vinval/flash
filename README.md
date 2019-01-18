@@ -207,7 +207,7 @@ console.info(JDomFind("ID"))
 ```javascript
 /*
     you can use JDomModule("path/to/file") or __m() just inside the server
-    use of extension is necessary if it isn't json
+    to include any external json file
 */
 
 {
@@ -215,7 +215,7 @@ console.info(JDomFind("ID"))
     style: JDomModule("path/to/file"))
 }
 ```
-##### returns file callback (json object for example)
+##### returns external json object
 ## JDomPrettify
 ```javascript
 /*
