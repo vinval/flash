@@ -119,10 +119,9 @@ function JDom (dom, doc) {
         if (matches && str.indexOf("SELF")!==-1) {
             str = str.replace(/SELF/g, "__f('"+domObject.id+"').self").replace(/{{/g,"").replace(/}}/g,"");
             matches = regExp.exec(str);
-            console.log(str);
         }
         try {
-            const result = eval(match[1]);
+            const result = eval(matches[1]);
             return result;
         } catch (e) {
             return str;
