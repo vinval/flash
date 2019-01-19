@@ -144,6 +144,10 @@ function JDom (dom, doc) {
             str = str.replace(/SELF/g, "__f('"+domObject.id+"').self").replace(/{{/g,"").replace(/}}/g,"");
             matches = regExp.exec(str);
         }
+        if (matches && str.indexOf("PARENT")!==-1) {
+            str = str.replace(/PARENT/g, "__f('"+domObject.id+"').parent").replace(/{{/g,"").replace(/}}/g,"");
+            matches = regExp.exec(str);
+        }
         try {
             const result = eval(matches[1]);
             return result;
