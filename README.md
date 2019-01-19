@@ -352,7 +352,8 @@ JDomPrettify()
         style: {
             width: SCREEN.width/2,
             height: SCREEN.height
-        }
+        },
+        onclick: "console.log({{PARENT.width}})"
     }
 ```
 ---
