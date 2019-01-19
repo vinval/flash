@@ -100,7 +100,7 @@ function JDom (dom, doc) {
             domObject.map(function(elem){
                 if (necessaryTagsCheck(elem)) {
                     var domElement = document.createElement(elem.tag || "div");
-                    elem.id = elem.id ? elem.id : randomID();
+                    elem.id = "id" in elem ? elem.id : randomID();
                     Object.keys(elem).map(function(item){
                         try {
                             if (excludeTagsFromBuilding(item)) {
@@ -125,7 +125,6 @@ function JDom (dom, doc) {
             })
         } catch (e) {
             if (dom.length) {
-                console.error("JDom::", e)
                 console.info("JDom:: childs attribute must be array")
             }
         }
@@ -346,17 +345,17 @@ const __f = JDomFind = function (id) {
             jg.map(function(e,k){
                 if (e.id === id) {
                     index.push(k);
-                    e.width = e.width
+                    e.width = "width" in e
                         ? e.width
                         : e.element.offsetWidth;
-                    e.height = e.height
+                    e.height = "height" in e
                         ? e.height
                         : e.element.offsetHeight;
                     if (parent) {
-                        parent.width = parent.width
+                        parent.width = "width" in parent
                             ? parent.width
                             : parent.element.offsetWidth;
-                        parent.height = parent.height
+                        parent.height = "height" in parent
                             ? parent.height
                             : parent.element.offsetHeight;
                     }
@@ -366,7 +365,7 @@ const __f = JDomFind = function (id) {
                         parent: parent
                     };
                     return true;
-                } else if (e.childs) {
+                } else if ("childs" in e) {
                     index.push(k);
                     recursive(id, e.childs, index, e)
                 } else {
