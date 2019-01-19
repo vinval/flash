@@ -364,6 +364,24 @@ const __f = JDomFind = function (id) {
     return found
 }
 
+const __i = JDomInclude = function(filePath) {
+    if (window.location.protocol !== "file:") {
+        const splice = filePath.split(".");
+        filePath = splice.length>1 ? filePath : filePath+".js";
+        var req = new XMLHttpRequest();
+        req.open("GET", filePath, false); // 'false': synchronous.
+        req.send(null);
+        var headElement = document.getElementsByTagName("head")[0];
+        var newScriptElement = document.createElement("script");
+        newScriptElement.type = "text/javascript";
+        newScriptElement.text = req.responseText;
+        headElement.appendChild(newScriptElement);
+    } else {
+        console.error("Jdom::", "you cannot use JDomModule outside server");
+        return false;
+    } 
+};
+
 const __m = JDomModule = function(filePath) {
     if (window.location.protocol !== "file:") {
         const splice = filePath.split(".");
