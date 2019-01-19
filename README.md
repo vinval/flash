@@ -341,8 +341,11 @@ JDomPrettify()
 |SCREEN         |object            |width:[num]       |Public      |
 |               |                  |height:[num]      |            |
 |SELF           |object            |this child object |Private     |
+|               |                  |width:[num]       |            |
+|               |                  |height:[num]      |            |
 |PARENT         |object            |this parent object|Private     |
-
+|               |                  |width:[num]       |            |
+|               |                  |height:[num]      |            |
 ```javascript
     {
         html: "{{SELF.id}}",
