@@ -80,14 +80,14 @@ function JDom (dom, doc) {
         domElement.addEventListener(eventIn, function(){
             style = __f(elem.id).self.style;
             style = style ?  stringifyStyle(style) : {};
-            __f(elem.id).self.element.style = parseStyle(
+            domElement.style = parseStyle(
                 __c(style, elem[pseudo]),
                 elem,
                 domElement
             )
         })
         domElement.addEventListener(eventOut, function(){
-            __f(elem.id).self.element.style = parseStyle(
+            domElement.style = parseStyle(
                 style, 
                 elem,
                 domElement
