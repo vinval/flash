@@ -109,7 +109,7 @@ function JDom (dom, doc) {
                                 if (elem[item]) domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
                                 switch (item) {
-                                    case "html": domElement.innerHTML = domEvaluateString(elem[item], elem); break;
+                                    case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
                                     case "hover": cssPseudo (domElement, elem, "hover"); break;
                                     case "focus": cssPseudo (domElement, elem, "focus"); break;
                                     case "active": cssPseudo (domElement, elem, "active"); break;
@@ -334,6 +334,9 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
 
 const __f = JDomFind = function (id) {
     var found = false
+    function html (element, value) {
+        element.element.innerHTML = value
+    }
     function recursive(id, obj, index, parent) {
         const jg = obj ? obj : window.jdomGlobal;
         var index = index ? index : [];
