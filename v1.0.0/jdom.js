@@ -1,5 +1,5 @@
 window.jdomActiveElement = null;
-
+window.jdomDocChoosed = null;
 const SCREEN = {
     width:  window.innerWidth
         || document.documentElement.clientWidth
@@ -18,6 +18,7 @@ function JDom (dom, doc) {
     doc.innerHTML = ""; 
     domBuilder(dom, doc);
     window.jdomGlobal = dom;
+    window.jdomDocChoosed = doc;
     domElementsObserve();
     //domObjectObserve();
     if (jdomActiveElement) {
@@ -345,6 +346,20 @@ const __f = JDomFind = function (id) {
             jg.map(function(e,k){
                 if (e.id === id) {
                     index.push(k);
+                    e.width = e.width
+                        ? e.width
+                        : e.element.offsetWidth;
+                    e.height = e.height
+                        ? e.height
+                        : e.element.offsetHeight;
+                    if (parent) {
+                        parent.width = parent.width
+                            ? parent.width
+                            : parent.element.offsetWidth;
+                        parent.height = parent.height
+                            ? parent.height
+                            : parent.element.offsetHeight;
+                    }
                     found = {
                         self: e,
                         path: index,
@@ -385,11 +400,11 @@ const __i = JDomInclude = function(filePath) {
 const __m = JDomModule = function(filePath) {
     if (window.location.protocol !== "file:") {
         const splice = filePath.split(".");
-        const extension = splice.length>1 ? "" : ".json";
+        filePath = splice.length>1 ? filePath : filePath+".json";
         // Load json file;
         function JDomloadTextFileAjaxSync(filePath, mimeType) {
             var xmlhttp=new XMLHttpRequest();
-            xmlhttp.open("GET",filePath+extension,false);
+            xmlhttp.open("GET",filePath+"?updated="+(new Date().getTime()),false);
             if (mimeType != null) {
                 if (xmlhttp.overrideMimeType) {
                     xmlhttp.overrideMimeType(mimeType);
@@ -412,6 +427,11 @@ const __m = JDomModule = function(filePath) {
         return false;
     } 
 };
+
+JDom.prototype.update = function() {
+    //console.log(this);
+    JDom(jdomGlobal, jdomDocChoosed)
+}
 
 JDom.prototype.then = function(callback) {
     return callback(jdomGlobal)
