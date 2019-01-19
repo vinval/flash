@@ -206,8 +206,8 @@ console.info(JDomFind("ID"))
 ## JDomModule
 ```javascript
 /*
-    you can use JDomModule("path/to/file") or __m() just inside the server
-    to include any external json file
+    you can use JDomModule("path/to/file") or __m("path/to/file") just inside the server
+    to include synchronously any external json file
 */
 
 {
@@ -215,7 +215,17 @@ console.info(JDomFind("ID"))
     style: JDomModule("path/to/file"))
 }
 ```
-##### returns external json object
+##### returns an external json object
+## JDomInclude
+```javascript
+/*
+    you can use JDomInclude("path/to/file") or __i("path/to/file") just inside the server
+    to include synchronously any external javascript file
+*/
+
+JDomInclude("path/to/file"))
+```
+##### load an external js file
 ## JDomPrettify
 ```javascript
 /*
