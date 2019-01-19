@@ -140,14 +140,10 @@ function JDom (dom, doc) {
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
         var matches = regExp.exec(str);
-        if (matches && str.indexOf("SELF")!==-1) {
-            str = str.replace(/SELF/g, "__f('"+domObject.id+"').self").replace(/{{/g,"").replace(/}}/g,"");
-            matches = regExp.exec(str);
-        }
-        if (matches && str.indexOf("PARENT")!==-1) {
-            str = str.replace(/PARENT/g, "__f('"+domObject.id+"').parent").replace(/{{/g,"").replace(/}}/g,"");
-            matches = regExp.exec(str);
-        }
+        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "__f('"+domObject.id+"').self");
+        if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "__f('"+domObject.id+"').parent");
+        str = str.replace(/{{/g,"").replace(/}}/g,"");            
+        matches = regExp.exec(str);
         try {
             const result = eval(matches[1]);
             return result;
