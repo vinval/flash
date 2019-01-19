@@ -78,15 +78,15 @@ function JDom (dom, doc) {
         };
         domElement.addEventListener(eventIn, function(){
             style = __f(elem.id).self.style;
-            style = style ?  deformattingStyle(style) : {};
-            __f(elem.id).self.element.style = formattingStyle(
+            style = style ?  stringifyStyle(style) : {};
+            __f(elem.id).self.element.style = parseStyle(
                 __c(style, elem[pseudo]),
                 elem,
                 domElement
             )
         })
         domElement.addEventListener(eventOut, function(){
-            __f(elem.id).self.element.style = formattingStyle(
+            __f(elem.id).self.element.style = parseStyle(
                 style, 
                 elem,
                 domElement
@@ -104,7 +104,7 @@ function JDom (dom, doc) {
                         try {
                             if (excludeTagsFromBuilding(item)) {
                                 switch (item) {
-                                    case "style": elem[item] = formattingStyle(elem[item], elem, domElement); break;
+                                    case "style": elem[item] = parseStyle(elem[item], elem, domElement); break;
                                 }
                                 if (elem[item]) domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
@@ -145,14 +145,13 @@ function JDom (dom, doc) {
         str = str.replace(/{{/g,"").replace(/}}/g,"");            
         matches = regExp.exec(str);
         try {
-            const result = eval(matches[1]);
-            return result;
+            return eval(matches[1]);
         } catch (e) {
             return str;
         }
     }
         
-    function deformattingStyle (style) {
+    function stringifyStyle (style) {
         var s = style.split(";");
         var r = {};
         s.map(function(e){
@@ -173,7 +172,7 @@ function JDom (dom, doc) {
         return r;
     }
     
-    function formattingStyle(style, domObject, domElement) {
+    function parseStyle(style, domObject, domElement) {
         if (typeof style === "string") return domEvaluateString(style, domObject);
         try {
             var styleArray = [];
@@ -365,11 +364,11 @@ const __f = JDomFind = function (id) {
 const __m = JDomModule = function(filePath) {
     if (window.location.protocol !== "file:") {
         const splice = filePath.split(".");
-        const extension = splice.length>1 ? splice[splice.length-1] : "json";
+        const extension = splice.length>1 ? "" : ".json";
         // Load json file;
         function JDomloadTextFileAjaxSync(filePath, mimeType) {
             var xmlhttp=new XMLHttpRequest();
-            xmlhttp.open("GET",filePath+"."+extension,false);
+            xmlhttp.open("GET",filePath+extension,false);
             if (mimeType != null) {
                 if (xmlhttp.overrideMimeType) {
                     xmlhttp.overrideMimeType(mimeType);
