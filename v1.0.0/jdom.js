@@ -459,6 +459,7 @@ Array.prototype.find = function (id) {
         }).join(".childs"))
     } catch (e) {
         console.log("JDom::", "check the scope there was a");
+        return {}
     }
 }
 
