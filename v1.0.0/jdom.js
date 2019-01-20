@@ -20,17 +20,10 @@ function JDom (dom, doc) {
     window.jdomGlobal = dom;
     window.jdomDocChoosed = doc;
     domElementsObserve();
-    //domObjectObserve();
     if (jdomActiveElement) {
         const ae = document.getElementById(jdomActiveElement);
         ae.focus();
         ae.value = ae.value
-    }
-    
-    function domObjectObserve() {
-        document.addEventListener("change", function(){
-            JDom(jdomGlobal);
-        })
     }
     
     function domElementsObserve() {
