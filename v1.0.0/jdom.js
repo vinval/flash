@@ -1,12 +1,16 @@
 window.jdomActiveElement = null;
 window.jdomDocChoosed = null;
-const SCREEN = {
-    width:  window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth,
-    height: window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight
+var SCREEN = JDomDetectScreenSize ();
+
+function JDomDetectScreenSize () {
+    return {
+        width:  window.innerWidth
+            || document.documentElement.clientWidth
+            || document.body.clientWidth,
+        height: window.innerHeight
+            || document.documentElement.clientHeight
+            || document.body.clientHeight
+    }
 }
 
 function JDom (dom, doc) {
@@ -98,8 +102,9 @@ function JDom (dom, doc) {
                         try {
                             if (excludeTagsFromBuilding(item)) {
                                 switch (item) {
-                                    case "style": domElement.setAttribute(item, domEvaluateString(parseStyle(elem[item], elem, domElement), elem)); break;
+                                    case "style": elem[item] = domEvaluateString(parseStyle(elem[item], elem, domElement), elem); break;
                                 }
+                                domElement.setAttribute(item, elem[item]);
                             } else {
                                 switch (item) {
                                     case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
@@ -459,3 +464,7 @@ Array.prototype.find = function (id) {
 JDom.prototype.prettify = function () {
     JDomPrettify()
 }
+
+setInterval(function(){
+    SCREEN = JDomDetectScreenSize ();
+},1)
