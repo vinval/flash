@@ -28,12 +28,16 @@
 /*
     JDom(siteStructure [array], domElement [HTMLElement])
     the second argument is optional (if not specified is body)
-    or if declared could be a string (id element) or HTMLElement
+    or if declared could be a string (element id) or HTMLElement
+    after that you can get callback with then method and use it
+    to update dom
 */
 
-JDom([
+new JDom([
     {} //this is a <div></div>
-])
+]).then((scope)=>{
+    scope.find("elementId").html = "Hello JDom"; //find elementId inside dom and change it
+})
 ```
 #### Inside the object you can add others by two properties:
 
@@ -42,7 +46,7 @@ JDom([
 
 ## html property
 ```javascript
-JDom([
+new JDom([
     {
         html: "<input type='text' value='...'/>"
     }
@@ -58,7 +62,7 @@ JDom([
 ```
 ## childs property
 ```javascript
-JDom([
+new JDom([
     {
         childs: [
             {}, // first div
@@ -149,17 +153,17 @@ JDom([
 ```javascript
 // you can use JDomConcat() or __c()
 
-const styles = {
+const STYLE = {
     div: {
         color: "#f00",
         backgroundColor: "#000"
     }
 }
 
-JDom([
+new JDom([
     {
         style: JDomConcat(
-            styles.div,
+            STYLE.div,
             {
                 height: 100
             }
@@ -188,7 +192,7 @@ JDomTransform(
         translateX: [100,500]
     },
     1000,
-    function(){
+    ()=>{
         alert("Wow! transformation complete.")
     }
 )
@@ -347,14 +351,14 @@ JDomPrettify()
 |               |                  |width:[num]       |            |
 |               |                  |height:[num]      |            |
 ```javascript
-    {
-        html: "{{SELF.id}}",
-        style: {
-            width: SCREEN.width/2,
-            height: SCREEN.height
-        },
-        onclick: "console.log({{PARENT.width}})"
-    }
+{
+    html: "{{SELF.id}}",
+    style: {
+        width: SCREEN.width/2,
+        height: SCREEN.height
+    },
+    onclick: "console.log({{PARENT.width}})"
+}
 ```
 ---
 # JDOM EXAMPLE
@@ -373,7 +377,7 @@ JDomPrettify()
 ```
 #### site.js
 ```javascript
-const styles = {
+const STYLE = {
     main: {
         width: SCREEN.width,
         height: SCREEN.height,
@@ -402,15 +406,15 @@ const styles = {
     }
 }
 
-JDom([
+let JD = new JDom([
     {
         id: "main",
-        style: styles.main,
+        style: STYLE.main,
         childs: [
             {
                 id: "child",
-                html: "Hello JDom!",
-                style: styles.child,
+                html: "Hello World",
+                style: STYLE.child,
                 hover: {
                     color: "red"
                 }
@@ -419,13 +423,19 @@ JDom([
     }
 ]);
 
+JD.then((scope)=>{
+    setTimeout(()=>{
+        scope.find("child").html = "Hello JDom"
+    },5000)
+})
+
 JDomTransform(
     "#child",
     {
         scale: [10,1]
     },
-    150
+    1500
 )
 
-JDomPrettify();
+JD.prettify();
 ```
