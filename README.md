@@ -16,6 +16,7 @@
     </head>
     <body>
     </body>
+    <script type="text/javascript" src="path/to/site.js"></script>
 </html>
 ```
 #### After that insert your script where you want after the body tag.
