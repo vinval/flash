@@ -5,7 +5,7 @@
 ---
 #### First of all declare the script reference into your main html then write your script after the body tag.
 
-#### So create main html page like index.html
+#### Create main html page like index.html and insert your script where you want after the body tag
 
 ```html
 <!doctype html>
@@ -19,8 +19,6 @@
     <script type="text/javascript" src="path/to/site.js"></script>
 </html>
 ```
-#### After that insert your script where you want after the body tag.
-
 ---
 
 #### Every DOM element is represented by an object in array like the example below.
