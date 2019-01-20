@@ -439,5 +439,4 @@ JDomTransform(
 
 JD.prettify();
 ```
-Another working example at link below
-[a link](https://vinval.github.io/jdom/)
+Another working example [at link](https://vinval.github.io/jdom/)
