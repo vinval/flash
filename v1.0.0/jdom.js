@@ -105,9 +105,8 @@ function JDom (dom, doc) {
                         try {
                             if (excludeTagsFromBuilding(item)) {
                                 switch (item) {
-                                    case "style": elem[item] = parseStyle(elem[item], elem, domElement); break;
+                                    case "style": domElement.setAttribute(item, domEvaluateString(parseStyle(elem[item], elem, domElement), elem)); break;
                                 }
-                                if (elem[item]) domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
                                 switch (item) {
                                     case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
@@ -152,24 +151,28 @@ function JDom (dom, doc) {
     }
         
     function stringifyStyle (style) {
-        var s = style.split(";");
-        var r = {};
-        s.map(function(e){
-            const prop = e
-                .split(":")[0]
-                .split("-")
-                .map(function(a,k){
-                    if (k>0) 
-                        return a.charAt(0).toUpperCase()+a.substr(1)
-                    else
-                        return a
-                })
-                .join("");
-            const value = e
-                .split(":")[1]
-            r[prop] = value
-        })
-        return r;
+        if (typeof style === "string") {
+            var s = style.split(";");
+            var r = {};
+            s.map(function(e){
+                const prop = e
+                    .split(":")[0]
+                    .split("-")
+                    .map(function(a,k){
+                        if (k>0) 
+                            return a.charAt(0).toUpperCase()+a.substr(1)
+                        else
+                            return a
+                    })
+                    .join("");
+                const value = e
+                    .split(":")[1]
+                r[prop] = value
+            })
+            return r;
+        } else {
+            return style;
+        }
     }
     
     function parseStyle(style, domObject, domElement) {
@@ -334,9 +337,6 @@ const __t = JDomTransform = function (htmlQueryReference, movementsObject, durat
 
 const __f = JDomFind = function (id) {
     var found = false
-    function html (element, value) {
-        element.element.innerHTML = value
-    }
     function recursive(id, obj, index, parent) {
         const jg = obj ? obj : window.jdomGlobal;
         var index = index ? index : [];
@@ -433,7 +433,33 @@ JDom.prototype.update = function() {
 }
 
 JDom.prototype.then = function(callback) {
-    return callback(jdomGlobal)
+    return callback(
+        new Proxy(jdomGlobal, {
+            get(target, key) {
+                if (typeof target[key] === 'object' && target[key] !== null) {
+                    return new Proxy(target[key], this)
+                } else {
+                    return target[key];
+                }
+            },
+            set (target, key, value) {
+                switch(key) {
+                    case "html": __f(target.id).self.element.innerHTML = value; break;
+                }        
+                return true
+            }
+        })
+    )
+}
+
+Array.prototype.find = function (id) {
+    try {
+        return eval("this"+__f(id).path.map(function(p){
+            return "["+p+"]"
+        }).join(".childs"))
+    } catch (e) {
+        console.log("JDom::", "check the scope there was a");
+    }
 }
 
 JDom.prototype.prettify = function () {
