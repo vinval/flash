@@ -1,0 +1,46 @@
+{
+    "clock": {
+        "display": "flex",
+        "backgroundColor": "#f2f2f2", 
+        "fontSize": 20, 
+        "transition": "all 1000ms",
+        "width": 200,
+        "height": 200,
+        "borderRadius": 50,
+        "border": "3px solid #a2a2a2",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "fontFamily": "'Orbitron', sans-serif",
+        "flexDirection": "column"
+    },
+    "display": {
+        "display": "flex",
+        "backgroundColor": "white",
+        "color": "green",
+        "width": 150,
+        "height": 30,
+        "justifyContent": "center",
+        "alignItems": "flex-end",
+        "paddingBottom": 5,
+        "borderRadius": 5,
+        "cursor": "pointer", 
+        "transition": "all 0.3s"
+    },
+    "seconds": {
+        "fontSize": 10,
+        "marginLeft": 5,
+        "paddingBottom": 2
+    },
+    "outlineShadow": {
+        "boxShadow": "3px 3px 5px 0px rgba(0,0,0,0.5)"
+    },
+    "insetShadow": {
+        "boxShadow": "inset 3px 3px 5px 0px rgba(0,0,0,0.5)"
+    },
+    "insetLight": {
+        "boxShadow": "inset 3px 3px 5px 0px rgba(255,255,255,0.9)"
+    },
+    "hover": {
+        "backgroundColor": "rgb(150,255,150)"
+    }
+}
