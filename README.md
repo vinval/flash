@@ -1,5 +1,5 @@
 ![Alt text](https://github.com/vinval/JDom/blob/master/logo_small.png?raw=true "JDOM")
-# JDOM INTRODUCTION
+# INTRODUCTION
 ###### v1.0.0
 ## Develope html and css simply coding javascript
 ---
@@ -80,7 +80,7 @@ new JDom([
 </body>
 ```
 ---
-# JDOM PROPERTIES
+# PROPERTIES
 #### JDom has different properties you can use as html attributes.
 #### All properties are optional. By defaul property tag value is div.
 
@@ -146,7 +146,7 @@ new JDom([
 :
 
 ---
-# JDOM METHODS
+# METHODS
 #### Two methods allow you to compile faster your HTML page
 ## JDomConcat
 ```javascript
@@ -240,7 +240,7 @@ JDomPrettify()
 ##### stylize and removes margins from the body
 
 ---
-# JDOM STYLE
+# STYLE
 ## STYLE PROPERTY METHODS
 #### as string value (static mode)
 ```javascript
@@ -289,7 +289,7 @@ JDomPrettify()
 }
 ```
 ---
-# JDOM PSEUDO-CLASSES
+# PSEUDO-CLASSES
 ## HOVER PROPERTY
 #### you can use this to see changes when mouse gets hover the element and goes outside
 | Property Name | Value Typeof    |
@@ -336,7 +336,7 @@ JDomPrettify()
 }
 ```
 ---
-# JDOM QUERIES
+# QUERIES
 #### All properties can be used by query. To do this assign string value to the property with double curly brackets.
 #### In this case you can use the reseved object words like below
 | Reserved Word | Typeof           | Return           |Where is    |
@@ -360,7 +360,7 @@ JDomPrettify()
 }
 ```
 ---
-# JDOM EXAMPLE
+# EXAMPLE
 #### index.html
 ```html
 <!doctype html>
