@@ -104,7 +104,7 @@ function JDom (dom, doc) {
                                 switch (item) {
                                     case "style": elem[item] = domEvaluateString(parseStyle(elem[item], elem, domElement), elem); break;
                                 }
-                                domElement.setAttribute(item, elem[item]);
+                                domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
                                 switch (item) {
                                     case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
