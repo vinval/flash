@@ -76,15 +76,15 @@ function JDom (dom, doc) {
         };
         domElement.addEventListener(eventIn, function(){
             style = __f(elem.id).self.style;
-            style = style ?  stringifyStyle(style) : {};
-            domElement.style = parseStyle(
+            style = style ?  parseStyle(style) : {};
+            domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
                 elem,
                 domElement
             )
         })
         domElement.addEventListener(eventOut, function(){
-            domElement.style = parseStyle(
+            domElement.style = stringifyStyle(
                 style, 
                 elem,
                 domElement
@@ -102,7 +102,7 @@ function JDom (dom, doc) {
                         try {
                             if (excludeTagsFromBuilding(item)) {
                                 switch (item) {
-                                    case "style": elem[item] = domEvaluateString(parseStyle(elem[item], elem, domElement), elem); break;
+                                    case "style": elem[item] = domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem); break;
                                 }
                                 domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
@@ -147,8 +147,8 @@ function JDom (dom, doc) {
             return str;
         }
     }
-        
-    function stringifyStyle (style) {
+                
+    function parseStyle (style) {
         if (typeof style === "string") {
             var s = style.split(";");
             var r = {};
@@ -172,8 +172,8 @@ function JDom (dom, doc) {
             return style;
         }
     }
-    
-    function parseStyle(style, domObject, domElement) {
+
+    function stringifyStyle(style, domObject, domElement) {
         if (typeof style === "string") return domEvaluateString(style, domObject);
         try {
             var styleArray = [];
@@ -441,9 +441,17 @@ JDom.prototype.then = function(callback) {
                 }
             },
             set (target, key, value) {
+                var k = key
                 switch(key) {
                     case "html": __f(target.id).self.element.innerHTML = value; break;
-                }        
+                    case "style":;
+                        if (typeof value === "object") 
+                            Object.keys(value).map(function(k){
+                                __f(target.id).self.element.style[k] = value[k];
+                            })
+                        break;
+                    default: __f(target.id).self.element[k] = value;
+                }                
                 return true
             }
         })
@@ -451,14 +459,19 @@ JDom.prototype.then = function(callback) {
 }
 
 Array.prototype.find = function (id) {
-    try {
-        return eval("this"+__f(id).path.map(function(p){
-            return "["+p+"]"
-        }).join(".childs"))
-    } catch (e) {
-        console.log("JDom::", "check the scope there was a");
-        return {}
+    let found = false
+    let findDeep = function(data, id) {
+        return data.some(function(e, k, j) {
+            if(e.id == id) {
+                found = e
+                return true;
+            } else if (e.childs) {
+                return findDeep(e.childs, id)
+            }
+        })
     }
+    findDeep(this, id)
+    return found;
 }
 
 JDom.prototype.prettify = function () {
