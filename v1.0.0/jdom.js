@@ -1,5 +1,3 @@
-window.jdomActiveElement = null;
-window.jdomDocChoosed = null;
 var SCREEN = JDomDetectScreenSize ();
 
 function JDomDetectScreenSize () {
@@ -13,23 +11,45 @@ function JDomDetectScreenSize () {
     }
 }
 
+window.jdomGlobal = {};
+window.jdomDocChoosed = document.body;
+window.jdomActiveElement = null;
+
 function JDom (dom, doc) {
-    doc = doc 
-        ? typeof doc === "string"
-            ? document.getElementById(doc)
-            : doc 
-        : document.body;
-    doc.innerHTML = ""; 
-    domBuilder(dom, doc);
-    window.jdomGlobal = dom;
-    window.jdomDocChoosed = doc;
-    domElementsObserve();
-    if (jdomActiveElement) {
-        const ae = document.getElementById(jdomActiveElement);
-        ae.focus();
-        ae.value = ae.value
+    return new Promise(function(resolve,reject){
+        doc = doc 
+            ? typeof doc === "string"
+                ? document.getElementById(doc)
+                : doc 
+            : document.body;
+        if (jdomActiveElement) {
+            const ae = document.getElementById(jdomActiveElement);
+            ae.focus();
+            ae.value = ae.value
+        }
+        domBuilder(dom, doc);
+        domElementsObserve();
+        resolve(newProxy(dom));
+        window.jdomGlobal = dom;
+        reject("There was an error!")
+    })
+    function newProxy(obj){
+        return new Proxy(obj, {
+            get(target, key) {
+                if (typeof target[key] === 'object' && target[key] !== null) {
+                    return new Proxy(target[key], this)
+                } else {
+                    return target[key];
+                }
+            },
+            set (target, key, value) {
+                target[key] = value;
+                domBuilder(__f(target.id, dom).parent.childs, __f(target.id, dom).parent.element);        
+                return true
+            }
+        })
     }
-    
+
     function domElementsObserve() {
         Array.prototype.slice.call(document.querySelectorAll("input")).map(function(input){
             input.addEventListener('change', function (evt) {
@@ -75,7 +95,7 @@ function JDom (dom, doc) {
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
         domElement.addEventListener(eventIn, function(){
-            style = __f(elem.id).self.style;
+            style = __f(elem.id, dom).style;
             style = style ?  parseStyle(style) : {};
             domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
@@ -93,29 +113,34 @@ function JDom (dom, doc) {
     }
 
     function domBuilder (domObject, positionInDom) {
+        var domElement = null;
         try {
             domObject.map(function(elem){
+                if (!document.getElementById(elem.id)) {
+                    domElement = document.createElement(elem.tag || "div");
+                    positionInDom.appendChild(domElement);
+                } else {
+                    domElement = document.getElementById(elem.id);
+                }
                 if (necessaryTagsCheck(elem)) {
-                    var domElement = document.createElement(elem.tag || "div");
                     elem.id = "id" in elem ? elem.id : randomID();
                     Object.keys(elem).map(function(item){
                         try {
                             if (excludeTagsFromBuilding(item)) {
                                 switch (item) {
-                                    case "style": elem[item] = domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem); break;
+                                    case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
+                                    default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                                 }
-                                domElement.setAttribute(item, domEvaluateString(elem[item], elem));
                             } else {
                                 switch (item) {
                                     case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
                                     case "hover": cssPseudo (domElement, elem, "hover"); break;
-                                    case "focus": cssPseudo (domElement, elem, "focus"); break;
-                                    case "active": cssPseudo (domElement, elem, "active"); break;
+                                    //case "focus": cssPseudo (domElement, elem, "focus"); break;
+                                    //case "active": cssPseudo (domElement, elem, "active"); break;
                                 }
                             }
                         } catch (e) {}
                     })
-                    positionInDom.appendChild(domElement);
                     if (elem["childs"]) domBuilder(elem["childs"], domElement);
                 }
                 elem.element = domElement;
@@ -337,12 +362,10 @@ const __f = JDomFind = function (id) {
     var found = false
     function recursive(id, obj, index, parent) {
         const jg = obj ? obj : window.jdomGlobal;
-        var index = index ? index : [];
-            parent = parent ? parent : null;
+        var parent = parent ? parent : null;
         if (typeof jg === "object" && jg.length > 0) {
             jg.map(function(e,k){
                 if (e.id === id) {
-                    index.push(k);
                     e.width = "width" in e
                         ? e.width
                         : e.element.offsetWidth;
@@ -357,14 +380,9 @@ const __f = JDomFind = function (id) {
                             ? parent.height
                             : parent.element.offsetHeight;
                     }
-                    found = {
-                        self: e,
-                        path: index,
-                        parent: parent
-                    };
-                    return true;
+                    e.parent = parent;
+                    found = e;
                 } else if ("childs" in e) {
-                    index.push(k);
                     recursive(id, e.childs, index, e)
                 } else {
                     return false
@@ -425,39 +443,6 @@ const __m = JDomModule = function(filePath) {
     } 
 };
 
-JDom.prototype.update = function() {
-    //console.log(this);
-    JDom(jdomGlobal, jdomDocChoosed)
-}
-
-JDom.prototype.then = function(callback) {
-    return callback(
-        new Proxy(jdomGlobal, {
-            get(target, key) {
-                if (typeof target[key] === 'object' && target[key] !== null) {
-                    return new Proxy(target[key], this)
-                } else {
-                    return target[key];
-                }
-            },
-            set (target, key, value) {
-                var k = key
-                switch(key) {
-                    case "html": __f(target.id).self.element.innerHTML = value; break;
-                    case "style":;
-                        if (typeof value === "object") 
-                            Object.keys(value).map(function(k){
-                                __f(target.id).self.element.style[k] = value[k];
-                            })
-                        break;
-                    default: __f(target.id).self.element[k] = value;
-                }                
-                return true
-            }
-        })
-    )
-}
-
 Array.prototype.find = function (id) {
     let found = false
     let findDeep = function(data, id) {
@@ -474,7 +459,7 @@ Array.prototype.find = function (id) {
     return found;
 }
 
-JDom.prototype.prettify = function () {
+Promise.prototype.prettify = function () {
     JDomPrettify()
 }
 
