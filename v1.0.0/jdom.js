@@ -16,6 +16,7 @@ window.jdomDocChoosed = document.body;
 window.jdomActiveElement = null;
 
 function JDom (dom, doc) {
+
     return new Promise(function(resolve,reject){
         doc = doc 
             ? typeof doc === "string"
@@ -28,11 +29,11 @@ function JDom (dom, doc) {
             ae.value = ae.value
         }
         domBuilder(dom, doc);
-        domElementsObserve();
         resolve(newProxy(dom));
         window.jdomGlobal = dom;
         reject("There was an error!")
     })
+
     function newProxy(obj){
         return new Proxy(obj, {
             get(target, key) {
@@ -48,42 +49,6 @@ function JDom (dom, doc) {
                 return true
             }
         })
-    }
-
-    function domElementsObserve() {
-        Array.prototype.slice.call(document.querySelectorAll("input")).map(function(input){
-            input.addEventListener('change', function (evt) {
-                if (this.type !== "text") {
-                    if (this.type === "radio") {
-                        const radios = this.parentNode.querySelectorAll('input[type="radio"]');
-                        Array.prototype.slice.call(radios).map(function(radio){
-                            domVariableSearch(radio.id, "__delete__", "checked");        
-                        })
-                    }
-                    domVariableSearch(this.id, this.checked ? true : "__delete__", "checked");
-                }
-            });
-            input.addEventListener('input', function (evt) {
-                domVariableSearch(this.id, this.value, "value");
-            });
-        })
-    }
-    
-    function domVariableSearch(id, value, property, obj) {
-        jdomActiveElement = id;
-        obj = obj ? obj : window.jdomGlobal;
-        try {
-            obj.map(function(o){
-                if (o.id === id) {
-                    o[property] = value;
-                    if (value === "__delete__") delete o[property]
-                    return false;
-                }
-                if (o.childs) domVariableSearch(id, value, property, o.childs)
-            })
-        } catch (e) {
-            console.log(e)
-        }
     }
 
     function cssPseudo (domElement, elem, pseudo) {
