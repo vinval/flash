@@ -405,7 +405,7 @@ const STYLE = {
     }
 }
 
-let JD = new Flash([
+let F = new Flash([
     {
         id: "main",
         style: STYLE.main,
@@ -422,7 +422,7 @@ let JD = new Flash([
     }
 ]);
 
-JD.then((scope)=>{
+F.then((scope)=>{
     setTimeout(()=>{
         scope.find("child").html = "Hello Flash"
     },5000)
@@ -436,6 +436,6 @@ FlashTransform(
     1500
 )
 
-JD.prettify();
+F.prettify();
 ```
 Another working example [at link](https://vinval.github.io/flash/)
