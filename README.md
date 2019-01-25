@@ -1,4 +1,4 @@
-<img width="100px" src="./flash.svg"/>FLASH.js
+<img width="100px" src="./flash.svg"/>{ FLASH.js }
 # INTRODUCTION
 ###### v1.0.0
 ## Develope html and css simply coding javascript
