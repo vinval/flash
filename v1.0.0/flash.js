@@ -363,8 +363,7 @@ const __t = FlashTransform = function (htmlQueryReference, movementsObject, dura
 
 const __i = FlashInclude = function(filePath) {
     if (window.location.protocol !== "file:") {
-        const splice = filePath.split(".");
-        filePath = splice.length>1 ? filePath : filePath+".js";
+        filePath = filePath.indexOf(".js") !== -1 ? filePath : filePath+".js";
         var req = new XMLHttpRequest();
         req.open("GET", filePath, false); // 'false': synchronous.
         req.send(null);
@@ -381,12 +380,11 @@ const __i = FlashInclude = function(filePath) {
 
 const __m = FlashModule = function(filePath) {
     if (window.location.protocol !== "file:") {
-        const splice = filePath.split(".");
-        filePath = splice.length>1 ? filePath : filePath+".json";
+        filePath = filePath.indexOf(".json") !== -1 ? filePath : filePath+".json";
         // Load json file;
         function FlashloadTextFileAjaxSync(filePath, mimeType) {
             var xmlhttp=new XMLHttpRequest();
-            xmlhttp.open("GET",filePath+"?updated="+(new Date().getTime()),false);
+            xmlhttp.open("GET",filePath+'?updated='+(new Date().getTime()),false);
             if (mimeType != null) {
                 if (xmlhttp.overrideMimeType) {
                     xmlhttp.overrideMimeType(mimeType);
