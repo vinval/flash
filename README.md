@@ -1,4 +1,4 @@
-![FLASH]<img width="100px" src="./flash.svg">
+![alt FLASH]<img width="100px" src="./flash.svg">
 #
 # INTRODUCTION
 ###### v1.0.0
