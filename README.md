@@ -45,7 +45,7 @@ new Flash([
 ## creating any html element
 ```javascript
 new Flash([
-    {} //this is equivalent to <div></div>,
+    {}, //this is equivalent to <div></div>,
     {
         tag: "input" //this is equivalent to <input/>
     }
