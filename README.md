@@ -1,4 +1,4 @@
-![Alt text](https://github.com/vinval/JDom/blob/master/flash.svg?raw=true "FLASH")
+![Alt text](https://github.com/vinval/JDom/blob/master/flash.svg?raw=true "FLASH")<img src="./flash.svg">
 # INTRODUCTION
 ###### v1.0.0
 ## Develope html and css simply coding javascript
