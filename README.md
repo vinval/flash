@@ -117,7 +117,7 @@ new Flash([
 |...            |                           |                                      |
 
 ## Reserved* property
-#### not visible in the elements structure inside inspector
+#### not visible in the elements structure (inside inspector)
 | Property Name | Value Typeof    |
 |---------------|-----------------|
 |element        |HTMLElement      |
@@ -152,7 +152,37 @@ new Flash([
 <button onclick="alert('clicked!')">click me!</button>
 ```
 :
+---
+# PROTOTYPES
+#### Flash.init()
+#### Flash.prettify()
+```javascript
+/*
+    you can use FlashPrettify() or __p()
+*/
+const F = new Flash([
+    ...
+]);
 
+F.prettify() 
+```
+##### stylize and removes margins from the body
+---
+# SCOPE
+#### scope.find()
+```javascript
+/*
+    you can use scope.find(#id)
+*/
+new Flash([
+    {
+        id: "test"
+    }
+]).then((scope)=>{
+    console.info(scope.find("test"))
+})
+```
+##### returns an object that contains element based on ID with self, path and parent properties inside scope
 ---
 # METHODS
 #### Two methods allow you to compile faster your HTML page
@@ -178,7 +208,7 @@ new Flash([
     }
 ])
 ```
-##### collapse two or more objects
+##### merge two or more objects. You can use it for styles, elements and others.
 ## FlashTransform
 ```javascript
 /* 
@@ -205,15 +235,6 @@ FlashTransform(
 )
 ```
 ##### provide to animate HTMLElements by style transformation
-## FlashFind
-```javascript
-/*
-    you can use FlashFind(#id) or __f()
-*/
-
-console.info(FlashFind("ID"))
-```
-##### returns an object that contains element based on ID with self, path and parent properties
 ## FlashModule
 ```javascript
 /*
@@ -237,16 +258,6 @@ console.info(FlashFind("ID"))
 FlashInclude("path/to/file"))
 ```
 ##### load an external js file
-## FlashPrettify
-```javascript
-/*
-    you can use FlashPrettify() or __p()
-*/
-
-FlashPrettify() 
-```
-##### stylize and removes margins from the body
-
 ---
 # STYLE
 ## STYLE PROPERTY METHODS
