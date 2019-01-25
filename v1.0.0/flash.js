@@ -54,7 +54,7 @@ function Flash (dom, doc) {
     }
 
     function cssPseudo (domElement, elem, pseudo) {
-        var style = {};
+        var style = elem.style || {};
         var eventIn, eventOut;
         switch (pseudo) {
             case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
@@ -63,7 +63,6 @@ function Flash (dom, doc) {
         };
         domElement.addEventListener(eventIn, function(){
             style = find(elem.id).style;
-            style = style ?  parseStyle(style) : {};
             domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
                 elem,
@@ -441,6 +440,6 @@ Promise.prototype.prettify = function () {
     FlashPrettify()
 }
 
-setInterval(function(){
+window.onresize = function(){
     SCREEN = FlashDetectScreenSize ();
-},1)
+}
