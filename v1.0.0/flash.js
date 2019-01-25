@@ -38,7 +38,6 @@ function Flash (dom, doc) {
                 }
             },
             set (target, key, value) {
-                console.log(target, key, value)
                 target[key] = value;
                 const found = find(target.id).parent;
                 domBuilder(
