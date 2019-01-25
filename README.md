@@ -33,7 +33,7 @@
 */
 
 new Flash([
-    {} //this is a <div></div>
+    {}
 ]).then((scope)=>{
     scope.find("elementId").html = "Hello Flash"; //find elementId inside dom and change it
 })
@@ -42,22 +42,14 @@ new Flash([
 
 1. html [string] (equivalent to HTMLElement.innerHTML)
 2. childs [array] (equivalent to HTMLElement.appendChild)
-
-## html property
+## creating any html element
 ```javascript
 new Flash([
+    {} //this is equivalent to <div></div>,
     {
-        html: "<input type='text' value='...'/>"
+        tag: "input" //this is equivalent to <input/>
     }
 ])
-```
-##### creates this html code
-```html
-<body>
-    <div>
-        <input type='text' value='...'/>
-    </div>
-</body>
 ```
 ## childs property
 ```javascript
@@ -70,12 +62,28 @@ new Flash([
     }
 ])
 ```
-##### creates this html code
+##### equivalent html code
 ```html
 <body>
     <div>
         <div></div>
         <div></div>
+    </div>
+</body>
+```
+## html property
+```javascript
+new Flash([
+    {
+        html: "<input type='text' value='...'/>"
+    }
+])
+```
+##### equivalent html code
+```html
+<body>
+    <div>
+        <input type='text' value='...'/>
     </div>
 </body>
 ```
