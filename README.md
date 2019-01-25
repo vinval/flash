@@ -35,7 +35,7 @@
 new Flash([
     {}
 ]).then((scope)=>{
-    scope.find("elementId").html = "Hello Flash"; //find elementId inside dom and change it
+    scope.find("elementId").html = "Hello Flash"; //find elementId inside dom and change his html
 })
 ```
 #### Inside the object you can add others by two properties:
