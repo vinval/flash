@@ -11,8 +11,8 @@
 <!doctype html>
 <html>
     <head>
-        <title>JDom</title>
-        <script type="text/javascript" src="path/to/jdom.js"></script>
+        <title>Flash</title>
+        <script type="text/javascript" src="path/to/flash.js"></script>
     </head>
     <body>
     </body>
@@ -25,17 +25,17 @@
 
 ```javascript
 /*
-    JDom(siteStructure [array], domElement [HTMLElement])
+    Flash(siteStructure [array], domElement [HTMLElement])
     the second argument is optional (if not specified is body)
     or if declared could be a string (element id) or HTMLElement
     after that you can get callback with then method and use it
     to update dom
 */
 
-new JDom([
+new Flash([
     {} //this is a <div></div>
 ]).then((scope)=>{
-    scope.find("elementId").html = "Hello JDom"; //find elementId inside dom and change it
+    scope.find("elementId").html = "Hello Flash"; //find elementId inside dom and change it
 })
 ```
 #### Inside the object you can add others by two properties:
@@ -45,7 +45,7 @@ new JDom([
 
 ## html property
 ```javascript
-new JDom([
+new Flash([
     {
         html: "<input type='text' value='...'/>"
     }
@@ -61,7 +61,7 @@ new JDom([
 ```
 ## childs property
 ```javascript
-new JDom([
+new Flash([
     {
         childs: [
             {}, // first div
@@ -81,7 +81,7 @@ new JDom([
 ```
 ---
 # PROPERTIES
-#### JDom has different properties you can use as html attributes.
+#### Flash has different properties you can use as html attributes.
 #### All properties are optional. By defaul property tag value is div.
 
 ## Special properties
@@ -114,11 +114,11 @@ new JDom([
 |---------------|-----------------|
 |element        |HTMLElement      |
 
-###### *JDom has a global object inside his parent (window) who is called jdomGlobal where you retreive each object with element property that contains the real HTMLElement 
+###### *Flash has a global object inside his parent (window) who is called flashGlobal where you retreive each object with element property that contains the real HTMLElement 
 
 ---
 # FROM OBJECT TO HTMLElement
-## JDom input
+## Flash input
 ```javascript
 {
     tag: "input",
@@ -131,7 +131,7 @@ new JDom([
 <input type="checkbox" checked/>
 ```
 :
-## JDom button
+## Flash button
 ```javascript
 {
     tag: "button",
@@ -148,9 +148,9 @@ new JDom([
 ---
 # METHODS
 #### Two methods allow you to compile faster your HTML page
-## JDomConcat
+## FlashConcat
 ```javascript
-// you can use JDomConcat() or __c()
+// you can use FlashConcat() or __c()
 
 const STYLE = {
     div: {
@@ -159,9 +159,9 @@ const STYLE = {
     }
 }
 
-new JDom([
+new Flash([
     {
-        style: JDomConcat(
+        style: FlashConcat(
             STYLE.div,
             {
                 height: 100
@@ -171,12 +171,12 @@ new JDom([
 ])
 ```
 ##### collapse two or more objects
-## JDomTransform
+## FlashTransform
 ```javascript
 /* 
-    you can use JDomTransform() or __t()
+    you can use FlashTransform() or __t()
 
-    JDomTransform (
+    FlashTransform (
         htmlQueryReference [string], 
         movementsObject [object], // the property must be composed by numeric array [start,stop] 
         duration [number], // (optional) milliseconds 
@@ -184,7 +184,7 @@ new JDom([
     ) 
 */
 
-JDomTransform(
+FlashTransform(
     "#someId",
     {
         scale: [0,2],
@@ -197,45 +197,45 @@ JDomTransform(
 )
 ```
 ##### provide to animate HTMLElements by style transformation
-## JDomFind
+## FlashFind
 ```javascript
 /*
-    you can use JDomFind(#id) or __f()
+    you can use FlashFind(#id) or __f()
 */
 
-console.info(JDomFind("ID"))
+console.info(FlashFind("ID"))
 ```
 ##### returns an object that contains element based on ID with self, path and parent properties
-## JDomModule
+## FlashModule
 ```javascript
 /*
-    you can use JDomModule("path/to/file") or __m("path/to/file") just inside the server
+    you can use FlashModule("path/to/file") or __m("path/to/file") just inside the server
     to include synchronously any external json file
 */
 
 {
     tag: "input",
-    style: JDomModule("path/to/file"))
+    style: FlashModule("path/to/file"))
 }
 ```
 ##### returns an external json object
-## JDomInclude
+## FlashInclude
 ```javascript
 /*
-    you can use JDomInclude("path/to/file") or __i("path/to/file") just inside the server
+    you can use FlashInclude("path/to/file") or __i("path/to/file") just inside the server
     to include synchronously any external javascript file
 */
 
-JDomInclude("path/to/file"))
+FlashInclude("path/to/file"))
 ```
 ##### load an external js file
-## JDomPrettify
+## FlashPrettify
 ```javascript
 /*
-    you can use JDomPrettify() or __p()
+    you can use FlashPrettify() or __p()
 */
 
-JDomPrettify() 
+FlashPrettify() 
 ```
 ##### stylize and removes margins from the body
 
@@ -366,8 +366,8 @@ JDomPrettify()
 <!doctype html>
 <html>
     <head>
-        <title>JDom</title>
-        <script type="text/javascript" src="jdom.js"></script>
+        <title>Flash</title>
+        <script type="text/javascript" src="flash.js"></script>
     </head>
     <body>
     </body>
@@ -405,7 +405,7 @@ const STYLE = {
     }
 }
 
-let JD = new JDom([
+let JD = new Flash([
     {
         id: "main",
         style: STYLE.main,
@@ -424,11 +424,11 @@ let JD = new JDom([
 
 JD.then((scope)=>{
     setTimeout(()=>{
-        scope.find("child").html = "Hello JDom"
+        scope.find("child").html = "Hello Flash"
     },5000)
 })
 
-JDomTransform(
+FlashTransform(
     "#child",
     {
         scale: [10,1]
@@ -438,4 +438,4 @@ JDomTransform(
 
 JD.prettify();
 ```
-Another working example [at link](https://vinval.github.io/jdom/)
+Another working example [at link](https://vinval.github.io/flash/)
