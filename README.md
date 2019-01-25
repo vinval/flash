@@ -1,4 +1,4 @@
-![Alt FLASH](./flash.svg){:height="50%" width="50%"}
+![FLASH](./flash.svg | width=100)
 #
 # INTRODUCTION
 ###### v1.0.0
