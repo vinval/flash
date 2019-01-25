@@ -1,4 +1,4 @@
-![FLASH](./flash.svg | width=100)
+![FLASH](./flash.svg =100x100)
 #
 # INTRODUCTION
 ###### v1.0.0
