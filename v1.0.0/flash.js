@@ -13,21 +13,15 @@ function FlashDetectScreenSize () {
 
 window.flashGlobal = {};
 window.flashDocChoosed = document.body;
-window.flashActiveElement = null;
 
 function Flash (dom, doc) {
 
     return new Promise(function(resolve,reject){
-        doc = doc 
+        window.flashDocChoosed = doc = doc 
             ? typeof doc === "string"
                 ? document.getElementById(doc)
                 : doc 
             : document.body;
-        if (flashActiveElement) {
-            const ae = document.getElementById(flashActiveElement);
-            ae.focus();
-            ae.value = ae.value
-        }
         domBuilder(dom, doc);
         resolve(newProxy(dom));
         window.flashGlobal = dom;
@@ -44,8 +38,17 @@ function Flash (dom, doc) {
                 }
             },
             set (target, key, value) {
+                console.log(target, key, value)
                 target[key] = value;
-                domBuilder(__f(target.id, dom).parent.childs, __f(target.id, dom).parent.element);        
+                const found = find(target.id).parent;
+                domBuilder(
+                    found 
+                        ? found.childs
+                        : dom,
+                    found
+                        ? found.element
+                        : doc
+                    );        
                 return true
             }
         })
@@ -60,7 +63,7 @@ function Flash (dom, doc) {
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
         domElement.addEventListener(eventIn, function(){
-            style = __f(elem.id, dom).style;
+            style = find(elem.id).style;
             style = style ?  parseStyle(style) : {};
             domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
@@ -127,8 +130,8 @@ function Flash (dom, doc) {
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
         var matches = regExp.exec(str);
-        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "__f('"+domObject.id+"').self");
-        if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "__f('"+domObject.id+"').parent");
+        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "find('"+domObject.id+"').self");
+        if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "find('"+domObject.id+"').parent");
         str = str.replace(/{{/g,"").replace(/}}/g,"");            
         matches = regExp.exec(str);
         try {
@@ -163,6 +166,42 @@ function Flash (dom, doc) {
         }
     }
 
+    function find (id) {
+        var found = false
+        function recursive(id, obj, index, parent) {
+            const jg = obj ? obj : dom;
+            var parent = parent ? parent : null;
+            if (typeof jg === "object" && jg.length > 0) {
+                jg.map(function(e,k){
+                    if (e.id === id) {
+                        e.width = "width" in e
+                            ? e.width
+                            : e.element.offsetWidth;
+                        e.height = "height" in e
+                            ? e.height
+                            : e.element.offsetHeight;
+                        if (parent) {
+                            parent.width = "width" in parent
+                                ? parent.width
+                                : parent.element.offsetWidth;
+                            parent.height = "height" in parent
+                                ? parent.height
+                                : parent.element.offsetHeight;
+                        }
+                        e.parent = parent;
+                        found = e;
+                    } else if ("childs" in e) {
+                        recursive(id, e.childs, index, e)
+                    } else {
+                        return false
+                    }
+                })
+            }
+        }
+        recursive(id);
+        return found
+    }
+    
     function stringifyStyle(style, domObject, domElement) {
         if (typeof style === "string") return domEvaluateString(style, domObject);
         try {
@@ -323,42 +362,6 @@ const __t = FlashTransform = function (htmlQueryReference, movementsObject, dura
     }
 }
 
-const __f = FlashFind = function (id) {
-    var found = false
-    function recursive(id, obj, index, parent) {
-        const jg = obj ? obj : window.flashGlobal;
-        var parent = parent ? parent : null;
-        if (typeof jg === "object" && jg.length > 0) {
-            jg.map(function(e,k){
-                if (e.id === id) {
-                    e.width = "width" in e
-                        ? e.width
-                        : e.element.offsetWidth;
-                    e.height = "height" in e
-                        ? e.height
-                        : e.element.offsetHeight;
-                    if (parent) {
-                        parent.width = "width" in parent
-                            ? parent.width
-                            : parent.element.offsetWidth;
-                        parent.height = "height" in parent
-                            ? parent.height
-                            : parent.element.offsetHeight;
-                    }
-                    e.parent = parent;
-                    found = e;
-                } else if ("childs" in e) {
-                    recursive(id, e.childs, index, e)
-                } else {
-                    return false
-                }
-            })
-        }
-    }
-    recursive(id);
-    return found
-}
-
 const __i = FlashInclude = function(filePath) {
     if (window.location.protocol !== "file:") {
         const splice = filePath.split(".");
@@ -372,7 +375,7 @@ const __i = FlashInclude = function(filePath) {
         newScriptElement.text = req.responseText;
         headElement.appendChild(newScriptElement);
     } else {
-        console.error("Jdom::", "you cannot use FlashModule outside server");
+        console.error("Flash::", "you cannot use FlashModule outside server");
         return false;
     } 
 };
@@ -403,7 +406,7 @@ const __m = FlashModule = function(filePath) {
         // Parse json
         return JSON.parse(json);
     } else {
-        console.error("Jdom::", "you cannot use FlashModule outside server");
+        console.error("Flash::", "you cannot use FlashModule outside server");
         return false;
     } 
 };
@@ -422,6 +425,19 @@ Array.prototype.find = function (id) {
     }
     findDeep(this, id)
     return found;
+}
+
+Promise.prototype.init = function (settings) {
+    try {
+        document.title = settings.title || null;
+        settings.style = settings.style ? settings.style : {};
+        let doc = window.flashDocChoosed;
+        Object.keys(settings.style).map(function(prop){
+            doc.style[prop] = settings.style[prop]
+        })
+    } catch (e) {
+
+    }
 }
 
 Promise.prototype.prettify = function () {
