@@ -1,4 +1,4 @@
-![Alt FLASH](./flash.svg)<img width="100px" src="./flash.svg">
+![Alt FLASH](./flash.svg){:height="50%" width="50%"}
 #
 # INTRODUCTION
 ###### v1.0.0
