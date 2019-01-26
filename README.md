@@ -379,7 +379,7 @@ FlashInclude("path/to/file"))
 |---------------|------------------|------------------|------------|
 |SCREEN         |object            |width:[num]       |Public      |
 |               |                  |height:[num]      |            |
-|SELF           |object            |this child object |Private     |
+|SELF           |object            |this scope object |Private     |
 |               |                  |width:[num]       |            |
 |               |                  |height:[num]      |            |
 |PARENT         |object            |this parent object|Private     |
