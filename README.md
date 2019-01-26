@@ -155,6 +155,21 @@ new Flash([
 ---
 # PROTOTYPES
 #### Flash.init()
+```javascript
+/*
+    you can use FlashPrettify() or __p()
+*/
+const F = new Flash([
+    ...
+]);
+
+F.init({
+    title: "Flash Page", //document.title changed
+    style: {
+        backgroundColor: "red" //document stylized
+    }
+}) 
+```
 #### Flash.prettify()
 ```javascript
 /*
@@ -169,17 +184,18 @@ F.prettify()
 ##### stylize and removes margins from the body
 ---
 # SCOPE
-#### scope.find()
+#### FIND
 ```javascript
 /*
-    you can use scope.find(#id)
+    you can use scope.find(#id) to realtime change DOM Elements
 */
 new Flash([
     {
-        id: "test"
+        id: "test",
+        html: "Hello World"
     }
 ]).then((scope)=>{
-    console.info(scope.find("test"))
+    scope.find("test").html = "Hello Flash"
 })
 ```
 ##### returns an object that contains element based on ID with self, path and parent properties inside scope
