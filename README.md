@@ -175,6 +175,7 @@ F.init({
 ```javascript
 /*
     you can use FlashPrettify() or __p()
+    stylize and removes margins from the document body
 */
 const F = new Flash([
     ...
@@ -182,7 +183,6 @@ const F = new Flash([
 
 F.prettify() 
 ```
-##### stylize and removes margins from the body
 ---
 # SCOPE
 #### FIND
