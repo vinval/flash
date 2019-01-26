@@ -135,7 +135,7 @@ new Flash([
     checked: true
 }
 ```
-## HTML input tag
+## equivalent HTML input tag
 ```html
 <input type="checkbox" checked/>
 ```
@@ -148,7 +148,7 @@ new Flash([
     onclick: "alert('clicked!')"
 }
 ```
-## HTML button tag
+## equivalent HTML button tag
 ```html
 <button onclick="alert('clicked!')">click me!</button>
 ```
