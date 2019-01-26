@@ -128,7 +128,7 @@ function Flash (dom, doc) {
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
         var matches = regExp.exec(str);
-        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "find('"+domObject.id+"').self");
+        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "find('"+domObject.id+"')");
         if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "find('"+domObject.id+"').parent");
         str = str.replace(/{{/g,"").replace(/}}/g,"");            
         matches = regExp.exec(str);
