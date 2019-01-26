@@ -158,7 +158,7 @@ new Flash([
 #### Flash.init()
 ```javascript
 /*
-    you can use FlashPrettify() or __p()
+    set initial document parameters as title and style
 */
 const F = new Flash([
     ...
