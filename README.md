@@ -121,8 +121,9 @@ new Flash([
 | Property Name | Value Typeof    |
 |---------------|-----------------|
 |element        |HTMLElement      |
+|parent         |object           |
 
-###### *Flash has a global object inside his parent (window) who is called flashGlobal where you retreive each object with element property that contains the real HTMLElement 
+###### *Flash has a global object that returns after then method called scope (or whatever you want) where you retreive each object with element property that contains the real HTMLElement and his parent object
 
 ---
 # FROM OBJECT TO HTMLElement
