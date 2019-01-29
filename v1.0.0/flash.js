@@ -453,6 +453,22 @@ const __m = FlashModule = function(filePath) {
     } 
 };
 
+Array.prototype.findBy = function (property, value) {
+    let found = []
+    let findDeep = function(data, property) {
+        return data.some(function(e, k, j) {
+            if(e[property] == value) {
+                found.push(e);
+                //return true;
+            } else if (e.childs) {
+                return findDeep(e.childs, property)
+            }
+        })
+    }
+    findDeep(this, property)
+    return found.length > 0 ? found : false;
+}
+
 Array.prototype.find = function (id) {
     let found = false
     let findDeep = function(data, id) {
