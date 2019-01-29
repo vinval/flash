@@ -39,15 +39,32 @@ function Flash (dom, doc) {
             },
             set (target, key, value) {
                 target[key] = value;
-                const found = find(target.id).parent;
+                var found = find(target.id);
+                var childsPosition = false;
+                switch (key) {
+                    case "childs":;
+                        found.element.innerHTML = "";
+                        found.childs = typeof value === "object" 
+                                                ? value.length
+                                                    ? value
+                                                    : [value]
+                                                : [];
+                        break;
+                    default:;
+                        if (!isNaN(Number(key))) {
+                            found = found.parent;
+                            childsPosition = Number(key);
+                        }; break;
+                }
                 domBuilder(
                     found 
                         ? found.childs
                         : dom,
                     found
                         ? found.element
-                        : doc
-                    );        
+                        : doc,
+                    childsPosition
+                );        
                 return true
             }
         })
@@ -78,51 +95,78 @@ function Flash (dom, doc) {
         })
     }
 
-    function domBuilder (domObject, positionInDom) {
+    function domIdAssign (domObject) {
+        let result = domObject;
+        function recursive (obj) {
+            try {
+                obj = obj ? obj : result;
+                obj.map(function(elem){
+                    elem.id = "id" in elem ? elem.id : randomID();
+                    if (elem.childs) recursive(elem.childs)
+                })
+            } catch (e) { return false }
+        }
+        recursive();
+        return result;
+    }
+
+    function singleBuilder (elem, domElement) {
+        if (necessaryTagsCheck(elem)) {
+            Object.keys(elem).map(function(item){
+                try {
+                    if (excludeTagsFromBuilding(item)) {
+                        switch (item) {
+                            case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
+                            default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
+                        }
+                    } else {
+                        switch (item) {
+                            case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
+                            case "hover": cssPseudo (domElement, elem, "hover"); break;
+                            case "focus": cssPseudo (domElement, elem, "focus"); break;
+                            case "active": cssPseudo (domElement, elem, "active"); break;
+                        }
+                    }
+                } catch (e) {}
+            })
+            if (elem["childs"]) domBuilder(elem["childs"], domElement);
+        }
+        elem.element = domElement;
+    }
+
+    function domBuilder (domObject, positionInDom, childsPosition) {
+        domObject = domIdAssign(domObject);
         var domElement = null;
         try {
-            domObject.map(function(elem){
-                elem.id = "id" in elem ? elem.id : randomID();
-                if (!document.getElementById(elem.id)) {
-                    domElement = document.createElement(elem.tag || "div");
-                    positionInDom.appendChild(domElement);
+            domObject.map(function(elem, key) {
+                if (childsPosition !== undefined) {
+                    if (childsPosition === key) {
+                        domElement = document.createElement(elem.tag || "div");
+                        positionInDom.replaceChild(domElement, positionInDom.childNodes[key]);
+                        singleBuilder (elem, domElement);
+                    }  
                 } else {
-                    domElement = document.getElementById(elem.id);
+                    if (!document.getElementById(elem.id)) {
+                        domElement = document.createElement(elem.tag || "div");
+                        positionInDom.appendChild(domElement);
+                    } else {
+                        domElement = document.getElementById(elem.id);
+                    }
+                    singleBuilder (elem, domElement);
                 }
-                if (necessaryTagsCheck(elem)) {
-                    Object.keys(elem).map(function(item){
-                        try {
-                            if (excludeTagsFromBuilding(item)) {
-                                switch (item) {
-                                    case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
-                                    default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
-                                }
-                            } else {
-                                switch (item) {
-                                    case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
-                                    case "hover": cssPseudo (domElement, elem, "hover"); break;
-                                    case "focus": cssPseudo (domElement, elem, "focus"); break;
-                                    case "active": cssPseudo (domElement, elem, "active"); break;
-                                }
-                            }
-                        } catch (e) {}
-                    })
-                    if (elem["childs"]) domBuilder(elem["childs"], domElement);
-                }
-                elem.element = domElement;
             })
         } catch (e) {
             if (dom.length) {
                 console.info("Flash:: childs attribute must be array")
             }
         }
-        
-        function randomID() {
-            const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var id = "";
-            for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
-            return id;
-        }
+    }
+    
+    function randomID() {
+        const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var id = "";
+        for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
+        return id;
     }
     
     function domEvaluateString(str, domObject) {
@@ -172,20 +216,22 @@ function Flash (dom, doc) {
             if (typeof jg === "object" && jg.length > 0) {
                 jg.map(function(e,k){
                     if (e.id === id) {
-                        e.width = "width" in e
-                            ? e.width
-                            : e.element.offsetWidth;
-                        e.height = "height" in e
-                            ? e.height
-                            : e.element.offsetHeight;
-                        if (parent) {
-                            parent.width = "width" in parent
-                                ? parent.width
-                                : parent.element.offsetWidth;
-                            parent.height = "height" in parent
-                                ? parent.height
-                                : parent.element.offsetHeight;
-                        }
+                        try {
+                            e.width = "width" in e
+                                ? e.width
+                                : e.element.offsetWidth;
+                            e.height = "height" in e
+                                ? e.height
+                                : e.element.offsetHeight;
+                            if (parent) {
+                                parent.width = "width" in parent
+                                    ? parent.width
+                                    : parent.element.offsetWidth;
+                                parent.height = "height" in parent
+                                    ? parent.height
+                                    : parent.element.offsetHeight;
+                            }
+                        } catch (e) {}
                         e.parent = parent;
                         found = e;
                     } else if ("childs" in e) {
