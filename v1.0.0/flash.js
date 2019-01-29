@@ -59,6 +59,8 @@ function Flash (dom, doc) {
                 domBuilder(
                     found 
                         ? found.childs
+                            ? found.childs
+                            : found
                         : dom,
                     found
                         ? found.element
@@ -129,7 +131,7 @@ function Flash (dom, doc) {
                     }
                 } catch (e) {}
             })
-            if (elem["childs"]) domBuilder(elem["childs"], domElement);
+            if (elem.childs) domBuilder(elem.childs, domElement);
         }
         elem.element = domElement;
     }
@@ -139,26 +141,22 @@ function Flash (dom, doc) {
         var domElement = null;
         try {
             domObject.map(function(elem, key) {
-                if (childsPosition !== undefined) {
+                if (childsPosition !== undefined && childsPosition !== false) {
                     if (childsPosition === key) {
                         domElement = document.createElement(elem.tag || "div");
                         positionInDom.replaceChild(domElement, positionInDom.childNodes[key]);
                         singleBuilder (elem, domElement);
-                    }  
+                    }
                 } else {
                     if (!document.getElementById(elem.id)) {
                         domElement = document.createElement(elem.tag || "div");
                         positionInDom.appendChild(domElement);
-                    } else {
-                        domElement = document.getElementById(elem.id);
                     }
                     singleBuilder (elem, domElement);
                 }
             })
         } catch (e) {
-            if (dom.length) {
-                console.info("Flash:: childs attribute must be array")
-            }
+            singleBuilder (domObject, domObject.element);
         }
     }
     
