@@ -188,7 +188,7 @@ F.prettify()
 #### FIND
 ```javascript
 /*
-    you can use scope.find(#id) to realtime change DOM Elements
+    you can use scope.find(#id) to find object and realtime change DOM Elements
 */
 new Flash([
     {
@@ -199,7 +199,25 @@ new Flash([
     scope.find("test").html = "Hello Flash"
 })
 ```
-##### returns an object that contains element based on ID with self, path and parent properties inside scope
+##### returns an object that contains element based on ID with self and parent properties inside scope
+#### FIND BY
+```javascript
+/*
+    you can use scope.findBy(property,name) to find object and realtime change DOM Elements
+*/
+new Flash([
+    {
+        tag: "button",
+        html: "don't click me"
+    {
+        tag: "button",
+        html: "click me"
+    }
+]).then((scope)=>{
+    console.log(scope.findBy("tag","button")) //return [{button1},{button2}]
+})
+```
+##### returns an objects array of elements based on ID with self and parent properties inside scope
 ---
 # METHODS
 #### Two methods allow you to compile faster your HTML page
