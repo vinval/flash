@@ -214,7 +214,7 @@ new Flash([
         html: "click me"
     }
 ]).then((scope)=>{
-    console.log(scope.findBy("tag","button")) //return [{button1},{button2}]
+    console.log(scope.findBy("tag","button")) //return [{...button1},{...button2}]
 })
 ```
 ##### returns an objects array of elements based on ID with self and parent properties inside scope
