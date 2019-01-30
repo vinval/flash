@@ -39,33 +39,14 @@ function Flash (dom, doc) {
             },
             set (target, key, value) {
                 target[key] = value;
-                var found = find(target.id);
-                var childsPosition = false;
-                switch (key) {
-                    case "childs":;
-                        found.element.innerHTML = "";
-                        found.childs = typeof value === "object" 
-                                                ? value.length
-                                                    ? value
-                                                    : [value]
-                                                : [];
-                        break;
-                    default:;
-                        if (!isNaN(Number(key))) {
-                            found = found.parent;
-                            childsPosition = Number(key);
-                        }; break;
-                }
+                const found = dom.find(target.id);
                 domBuilder(
                     found 
-                        ? found.childs
-                            ? found.childs
-                            : found
+                        ? found.length ? found : [found] 
                         : dom,
                     found
                         ? found.element
-                        : doc,
-                    childsPosition
+                        : doc
                 );        
                 return true
             }
@@ -73,7 +54,7 @@ function Flash (dom, doc) {
     }
 
     function cssPseudo (domElement, elem, pseudo) {
-        var style = elem.style || {};
+        var style = {};
         var eventIn, eventOut;
         switch (pseudo) {
             case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
@@ -81,7 +62,8 @@ function Flash (dom, doc) {
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
         domElement.addEventListener(eventIn, function(){
-            style = find(elem.id).style;
+            style = dom.find(elem.id).style;
+            style = style ?  parseStyle(style) : {};
             domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
                 elem,
@@ -97,88 +79,73 @@ function Flash (dom, doc) {
         })
     }
 
-    function domIdAssign (domObject) {
-        let result = domObject;
-        function recursive (obj) {
-            try {
-                obj = obj ? obj : result;
-                obj.map(function(elem){
-                    elem.id = "id" in elem ? elem.id : randomID();
-                    if (elem.childs) recursive(elem.childs)
-                })
-            } catch (e) { return false }
-        }
-        recursive();
-        return result;
-    }
-
-    function singleBuilder (elem, domElement) {
-        if (necessaryTagsCheck(elem)) {
-            Object.keys(elem).map(function(item){
-                try {
-                    if (excludeTagsFromBuilding(item)) {
-                        switch (item) {
-                            case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
-                            default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
-                        }
-                    } else {
-                        switch (item) {
-                            case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
-                            case "hover": cssPseudo (domElement, elem, "hover"); break;
-                            case "focus": cssPseudo (domElement, elem, "focus"); break;
-                            case "active": cssPseudo (domElement, elem, "active"); break;
-                        }
-                    }
-                } catch (e) {}
-            })
-            if (elem.childs) domBuilder(elem.childs, domElement);
-        }
-        elem.element = domElement;
-    }
-
-    function domBuilder (domObject, positionInDom, childsPosition) {
-        domObject = domIdAssign(domObject);
+    function domBuilder (domObject, positionInDom) {
         var domElement = null;
         try {
-            domObject.map(function(elem, key) {
-                if (childsPosition !== undefined && childsPosition !== false) {
-                    if (childsPosition === key) {
-                        domElement = document.createElement(elem.tag || "div");
-                        positionInDom.replaceChild(domElement, positionInDom.childNodes[key]);
-                        singleBuilder (elem, domElement);
-                    }
+            domObject.map(function(elem){
+                if (!document.getElementById(elem.id)) {
+                    domElement = document.createElement(elem.tag || "div");
+                    positionInDom.appendChild(domElement);
                 } else {
-                    if (!document.getElementById(elem.id)) {
-                        domElement = document.createElement(elem.tag || "div");
-                        positionInDom.appendChild(domElement);
-                    }
-                    singleBuilder (elem, domElement);
+                    domElement = document.getElementById(elem.id);
                 }
+                elem.element = domElement;
+                if (necessaryTagsCheck(elem)) {
+                    elem.id = "id" in elem ? elem.id : randomID();
+                    Object.keys(elem).map(function(item){
+                        try {
+                            if (excludeTagsFromBuilding(item)) {
+                                switch (item) {
+                                    case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
+                                    default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
+                                }
+                            } else {
+                                switch (item) {
+                                    case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
+                                    case "hover": cssPseudo (domElement, elem, "hover"); break;
+                                    case "focus": cssPseudo (domElement, elem, "focus"); break;
+                                    case "active": cssPseudo (domElement, elem, "active"); break;
+                                }
+                            }
+                        } catch (e) {}
+                    })
+                    if (elem["childs"]) domBuilder(elem["childs"], domElement);
+                }
+                //console.log(id, document.getElementById(id))
+                setTimeout(function(){
+                    elem.width = domElement.offsetWidth;
+                    elem.height = domElement.offsetHeight;                
+                },0)
             })
         } catch (e) {
-            singleBuilder (domObject, domObject.element);
+            if (dom.length) {
+                console.info("Flash:: childs attribute must be array")
+            }
         }
-    }
-    
-    function randomID() {
-        const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        var id = "";
-        for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
-        return id;
+        
+        function randomID() {
+            const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var id = "";
+            for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
+            return id;
+        }
     }
     
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
+        if (str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "dom.find('"+domObject.id+"').element");
+        if (str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "dom.find('"+domObject.id+"').element.parentNode");
         var matches = regExp.exec(str);
-        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "find('"+domObject.id+"')");
-        if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "find('"+domObject.id+"').parent");
-        str = str.replace(/{{/g,"").replace(/}}/g,"");            
-        matches = regExp.exec(str);
         try {
-            return eval(matches[1]);
-        } catch (e) {
-            return str;
-        }
+            if(matches) {
+                matches[1] = matches[1].replace("top","offsetTop");
+                matches[1] = matches[1].replace("left","offsetLeft");
+                matches[1] = matches[1].replace("width","offsetWidth");
+                matches[1] = matches[1].replace("height","offsetHeight");
+                str = str.replace(matches[0], eval(matches[1]));
+            }
+        } catch (e) {}
+        return str;
     }
                 
     function parseStyle (style) {
@@ -204,44 +171,6 @@ function Flash (dom, doc) {
         } else {
             return style;
         }
-    }
-
-    function find (id) {
-        var found = false
-        function recursive(id, obj, index, parent) {
-            const jg = obj ? obj : dom;
-            var parent = parent ? parent : null;
-            if (typeof jg === "object" && jg.length > 0) {
-                jg.map(function(e,k){
-                    if (e.id === id) {
-                        try {
-                            e.width = "width" in e
-                                ? e.width
-                                : e.element.offsetWidth;
-                            e.height = "height" in e
-                                ? e.height
-                                : e.element.offsetHeight;
-                            if (parent) {
-                                parent.width = "width" in parent
-                                    ? parent.width
-                                    : parent.element.offsetWidth;
-                                parent.height = "height" in parent
-                                    ? parent.height
-                                    : parent.element.offsetHeight;
-                            }
-                        } catch (e) {}
-                        e.parent = parent;
-                        found = e;
-                    } else if ("childs" in e) {
-                        recursive(id, e.childs, index, e)
-                    } else {
-                        return false
-                    }
-                })
-            }
-        }
-        recursive(id);
-        return found
     }
     
     function stringifyStyle(style, domObject, domElement) {
@@ -451,22 +380,6 @@ const __m = FlashModule = function(filePath) {
     } 
 };
 
-Array.prototype.findBy = function (property, value) {
-    let found = []
-    let findDeep = function(data, property) {
-        return data.some(function(e, k, j) {
-            if(e[property] == value) {
-                found.push(e);
-                //return true;
-            } else if (e.childs) {
-                return findDeep(e.childs, property)
-            }
-        })
-    }
-    findDeep(this, property)
-    return found.length > 0 ? found : false;
-}
-
 Array.prototype.find = function (id) {
     let found = false
     let findDeep = function(data, id) {
@@ -500,6 +413,6 @@ Promise.prototype.prettify = function () {
     FlashPrettify()
 }
 
-window.onresize = function(){
+setInterval(function(){
     SCREEN = FlashDetectScreenSize ();
-}
+},1)
