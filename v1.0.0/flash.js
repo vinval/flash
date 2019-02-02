@@ -24,7 +24,6 @@ function Flash (dom, doc) {
             : document.body;
         domBuilder(dom, doc);
         assignSizeAndPositionToAll();
-        console.log(dom);
         resolve(newProxy(dom));
         window.flashGlobal = dom;
         reject("There was an error!")
