@@ -23,6 +23,8 @@ function Flash (dom, doc) {
                 : doc 
             : document.body;
         domBuilder(dom, doc);
+        assignSizeAndPositionToAll();
+        console.log(dom);
         resolve(newProxy(dom));
         window.flashGlobal = dom;
         reject("There was an error!")
@@ -110,6 +112,19 @@ function Flash (dom, doc) {
         }
         recursive();
         return result;
+    }
+
+    function assignSizeAndPositionToAll() {
+        function recursive (obj) {
+            obj = obj ? obj : dom;
+            try {
+                obj.map(function(o){
+                    find(o.id);
+                    if (o.childs) recursive(o.childs);
+                })
+            } catch (e) {}
+        }
+        recursive()
     }
 
     function singleBuilder (elem, domElement) {
@@ -215,6 +230,8 @@ function Flash (dom, doc) {
                 jg.map(function(e,k){
                     if (e.id === id) {
                         try {
+                            e.top = e.element.offsetTop;
+                            e.left = e.element.offsetLeft;
                             e.width = "width" in e
                                 ? e.width
                                 : e.element.offsetWidth;
