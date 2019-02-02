@@ -23,13 +23,16 @@ function Flash (dom, doc) {
                 : doc 
             : document.body;
         domBuilder(dom, doc);
-        assignSizeAndPositionToAll();
         resolve(newProxy(dom));
+        console.log(dom);
         window.flashGlobal = dom;
         reject("There was an error!")
     })
 
     function newProxy(obj){
+        setTimeout(function(){
+            assignSizeAndPositionToAll();
+        })
         return new Proxy(obj, {
             get(target, key) {
                 if (typeof target[key] === 'object' && target[key] !== null) {
@@ -67,7 +70,7 @@ function Flash (dom, doc) {
                         ? found.element
                         : doc,
                     childsPosition
-                );        
+                );     
                 return true
             }
         })
