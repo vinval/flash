@@ -1,6 +1,6 @@
 <img width="100px" src="./flash.svg"/>{ FLASH.js }
 # INTRODUCTION
-###### v1.0.0 last update 01/31/2019
+###### v1.0.0 last update 02/09/2019
 ## Develope html and css simply coding javascript
 ---
 #### First of all declare the script reference into your main html then write your script after the body tag.
