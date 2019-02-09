@@ -24,7 +24,6 @@ function Flash (dom, doc) {
             : document.body;
         domBuilder(dom, doc);
         resolve(newProxy(dom));
-        console.log(dom);
         window.flashGlobal = dom;
         reject("There was an error!")
     })
@@ -35,10 +34,15 @@ function Flash (dom, doc) {
         })
         return new Proxy(obj, {
             get(target, key) {
-                if (typeof target[key] === 'object' && target[key] !== null) {
-                    return new Proxy(target[key], this)
+                if (key === "element") return target.element;
+                if (target[key]) {
+                    if (typeof target[key] === 'object') {
+                        return new Proxy(target[key], this)
+                    } else {
+                        return target[key];
+                    }
                 } else {
-                    return target[key];
+                    return false;
                 }
             },
             set (target, key, value) {
