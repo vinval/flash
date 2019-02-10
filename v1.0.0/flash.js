@@ -134,6 +134,7 @@ function Flash (dom, doc) {
     }
 
     function singleBuilder (elem, domElement) {
+        elem.element = domElement;
         if (necessaryTagsCheck(elem)) {
             Object.keys(elem).map(function(item){
                 try {
@@ -154,7 +155,6 @@ function Flash (dom, doc) {
             })
             if (elem.childs) domBuilder(elem.childs, domElement);
         }
-        elem.element = domElement;
     }
 
     function domBuilder (domObject, positionInDom, childsPosition) {
@@ -193,13 +193,15 @@ function Flash (dom, doc) {
         var matches = regExp.exec(str);
         if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "find('"+domObject.id+"')");
         if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "find('"+domObject.id+"').parent");
-        str = str.replace(/{{/g,"").replace(/}}/g,"");            
-        matches = regExp.exec(str);
-        try {
-            return eval(matches[1]);
-        } catch (e) {
-            return str;
+        str = str.replace(/{{/g,"").replace(/}}/g,"");
+        if (matches) {
+            try {            
+                return eval(str);
+            } catch (e) {
+                return str;
+            }
         }
+        return str;
     }
                 
     function parseStyle (style) {
