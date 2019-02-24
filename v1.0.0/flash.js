@@ -45,7 +45,6 @@ function Flash (dom, doc) {
             },
             set (target, key, value) {
                 target[key] = value;
-                console.log(key);
                 try {
                     domBuilder(__f(target.id, dom).parent.childs, __f(target.id, dom).parent.element);        
                 } catch (e) {}
