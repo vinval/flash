@@ -13,48 +13,76 @@ function FlashDetectScreenSize () {
 
 window.flashGlobal = {};
 window.flashDocChoosed = document.body;
-window.flashActiveElement = null;
+window.globalScope = {};
 
 function Flash (dom, doc) {
 
     return new Promise(function(resolve,reject){
-        doc = doc 
+        window.flashDocChoosed = doc = doc 
             ? typeof doc === "string"
                 ? document.getElementById(doc)
                 : doc 
             : document.body;
-        if (flashActiveElement) {
-            const ae = document.getElementById(flashActiveElement);
-            ae.focus();
-            ae.value = ae.value
-        }
         domBuilder(dom, doc);
-        resolve(newProxy(dom));
-        window.flashGlobal = dom;
+        window.globalScope = window.flashGlobal = newProxy(dom);
+        resolve(globalScope);
         reject("There was an error!")
     })
 
     function newProxy(obj){
+        setTimeout(function(){
+            assignSizeAndPositionToAll();
+        })
         return new Proxy(obj, {
-            get(target, key) {
-                if (typeof target[key] === 'object' && target[key] !== null) {
-                    return new Proxy(target[key], this)
+            get (target, key) {
+                if (key === "element") return target.element;
+                if (target[key]) {
+                    if (typeof target[key] === 'object') {
+                        return new Proxy(target[key], this)
+                    } else {
+                        return target[key];
+                    }
                 } else {
-                    return target[key];
+                    return false;
                 }
             },
             set (target, key, value) {
                 target[key] = value;
-                try {
-                    domBuilder(__f(target.id, dom).parent.childs, __f(target.id, dom).parent.element);        
-                } catch (e) {}
+                var found = find(target.id);
+                var childsPosition = false;
+                switch (key) {
+                    case "childs":;
+                        found.element.innerHTML = "";
+                        found.childs = typeof value === "object" 
+                                                ? value.length
+                                                    ? value
+                                                    : [value]
+                                                : [];
+                        break;
+                    default:;
+                        if (!isNaN(Number(key))) {
+                            found = found.parent;
+                            childsPosition = Number(key);
+                        }; break;
+                }
+                domBuilder(
+                    found 
+                        ? found.childs
+                            ? found.childs
+                            : found
+                        : dom,
+                    found
+                        ? found.element
+                        : doc,
+                    childsPosition
+                );     
                 return true
             }
         })
     }
 
     function cssPseudo (domElement, elem, pseudo) {
-        var style = {};
+        var style = elem.style || {};
         var eventIn, eventOut;
         switch (pseudo) {
             case "hover": eventIn = "mouseenter"; eventOut = "mouseleave"; break;
@@ -62,8 +90,7 @@ function Flash (dom, doc) {
             case "active": eventIn = "mousedown"; eventOut = "mouseup"; break;
         };
         domElement.addEventListener(eventIn, function(){
-            style = __f(elem.id, dom).style;
-            style = style ?  parseStyle(style) : {};
+            style = find(elem.id).style;
             domElement.style = stringifyStyle(
                 __c(style, elem[pseudo]),
                 elem,
@@ -79,93 +106,156 @@ function Flash (dom, doc) {
         })
     }
 
-    function domBuilder (domObject, positionInDom) {
-        positionInDom.innerHTML = "";
-        var domElement = null;
-        try {
-            domObject.map(function(elem){
-                if (!document.getElementById(elem.id)) {
-                    domElement = document.createElement(elem.tag || "div");
-                    positionInDom.appendChild(domElement);
-                } else {
-                    domElement = document.getElementById(elem.id);
-                }
-                if (necessaryTagsCheck(elem)) {
+    function domIdAssign (domObject) {
+        let result = domObject;
+        function recursive (obj) {
+            try {
+                obj = obj ? obj : result;
+                obj.map(function(elem){
                     elem.id = "id" in elem ? elem.id : randomID();
-                    Object.keys(elem).map(function(item){
-                        try {
-                            if (excludeTagsFromBuilding(item)) {
-                                switch (item) {
-                                    case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
-                                    default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
-                                }
-                            } else {
-                                switch (item) {
-                                    case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
-                                    case "hover": cssPseudo (domElement, elem, "hover"); break;
-                                    //case "focus": cssPseudo (domElement, elem, "focus"); break;
-                                    //case "active": cssPseudo (domElement, elem, "active"); break;
-                                }
-                            }
-                        } catch (e) {}
-                    })
-                    if (elem["childs"]) domBuilder(elem["childs"], domElement);
+                    if (elem.childs) recursive(elem.childs)
+                })
+            } catch (e) { return false }
+        }
+        recursive();
+        return result;
+    }
+
+    function assignSizeAndPositionToAll() {
+        function recursive (obj) {
+            obj = obj ? obj : dom;
+            try {
+                obj.map(function(o){
+                    find(o.id);
+                    if (o.childs) recursive(o.childs);
+                })
+            } catch (e) {}
+        }
+        recursive()
+    }
+
+    function singleBuilder (elem, domElement) {
+        elem.element = domElement;
+        if (necessaryTagsCheck(elem)) {
+            Object.keys(elem).map(function(item){
+                try {
+                    if (excludeTagsFromBuilding(item)) {
+                        switch (item) {
+                            case "style": domElement.setAttribute("style", domEvaluateString(stringifyStyle(elem[item], elem, domElement), elem)); break;
+                            default: domElement.setAttribute(item, domEvaluateString(elem[item], elem));
+                        }
+                    } else {
+                        switch (item) {
+                            case "html": if (typeof elem[item] === "number") domElement.innerHTML = elem[item]; else domElement.innerHTML = domEvaluateString(elem[item], elem); break;
+                            case "hover": cssPseudo (domElement, elem, "hover"); break;
+                            case "focus": cssPseudo (domElement, elem, "focus"); break;
+                            case "active": cssPseudo (domElement, elem, "active"); break;
+                        }
+                    }
+                } catch (e) {}
+            })
+            if (elem.childs) domBuilder(elem.childs, domElement);
+        }
+    }
+
+    function domBuilder (domObject, positionInDom, childsPosition) {
+        domObject = domIdAssign(domObject);
+        var domElement = null;
+        if (positionInDom) positionInDom.innerHTML = "";
+        try {
+            domObject.map(function(elem, key) {
+                if (childsPosition !== undefined && childsPosition !== false) {
+                    if (childsPosition === key) {
+                        domElement = document.createElement(elem.tag || "div");
+                        positionInDom.replaceChild(domElement, positionInDom.childNodes[key]);
+                        singleBuilder (elem, domElement);
+                    }
+                } else {
+                    if (!document.getElementById(elem.id)) {
+                        domElement = document.createElement(elem.tag || "div");
+                        positionInDom.appendChild(domElement);
+                    }
+                    singleBuilder (elem, domElement);
                 }
-                elem.element = domElement;
             })
         } catch (e) {
-            if (dom.length) {
-                console.info("Flash:: childs attribute must be array")
-            }
+            singleBuilder (domObject, domObject.element);
         }
-        
-        function randomID() {
-            const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var id = "";
-            for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
-            return id;
-        }
+    }
+    
+    function randomID() {
+        const cases = "@-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var id = "";
+        for (var n=0; n<10; n++) id+=cases[Math.floor(Math.random()*cases.length)];
+        return id;
     }
     
     function domEvaluateString(str, domObject) {
         const regExp = /{{(.*?)}}/g;
         var matches = regExp.exec(str);
-        if (matches && str.indexOf("SELF")!==-1) str = str.replace(/SELF/g, "__f('"+domObject.id+"').self");
-        if (matches && str.indexOf("PARENT")!==-1) str = str.replace(/PARENT/g, "__f('"+domObject.id+"').parent");
-        str = str.replace(/{{/g,"").replace(/}}/g,"");            
-        matches = regExp.exec(str);
+        if (matches) {
+            if (str.indexOf("SELF")!==-1) {
+                str = str.replace(/SELF/g, "find('"+domObject.id+"')");
+            }
+            if (str.indexOf("PARENT")!==-1) {
+                str = str.replace(/PARENT/g, "find('"+domObject.id+"').parent");
+            }
+        }
         try {
-            return eval(matches[1]);
-        } catch (e) {
-            return str;
-        }
-    }
-                
-    function parseStyle (style) {
-        if (typeof style === "string") {
-            var s = style.split(";");
-            var r = {};
-            s.map(function(e){
-                const prop = e
-                    .split(":")[0]
-                    .split("-")
-                    .map(function(a,k){
-                        if (k>0) 
-                            return a.charAt(0).toUpperCase()+a.substr(1)
-                        else
-                            return a
-                    })
-                    .join("");
-                const value = e
-                    .split(":")[1]
-                r[prop] = value
-            })
-            return r;
-        } else {
-            return style;
-        }
+            str = str.replace(/{{/g,"").replace(/}}/g,"");
+            if (matches) str = eval(str);
+        } catch (e) {}
+        return str;
     }
 
+    function find (id) {
+        var found = false
+        function recursive(id, obj, index, parent) {
+            const jg = obj ? obj : dom;
+            var parent = parent ? parent : null;
+            if (typeof jg === "object" && jg.length > 0) {
+                jg.map(function(e,k){
+                    if (e.id === id) {
+                        try {
+                            e.top = e.element.offsetTop;
+                            e.left = e.element.offsetLeft;
+                            e.width = Number(
+                                "width" in e
+                                    ? e.width
+                                    : e.element.offsetWidth
+                                );
+                            e.height = Number(
+                                "height" in e
+                                    ? e.height
+                                    : e.element.offsetHeight
+                                );
+                            if (parent) {
+                                parent.width = Number(
+                                    "width" in parent
+                                        ? parent.width
+                                        : parent.element.offsetWidth
+                                    );
+                                parent.height = Number(
+                                    "height" in parent
+                                        ? parent.height
+                                        : parent.element.offsetHeight
+                                    );
+                            }
+                        } catch (e) {}
+                        e.parent = parent;
+                        found = e;
+                    } else if ("childs" in e) {
+                        recursive(id, e.childs, index, e)
+                    } else {
+                        return false
+                    }
+                })
+            }
+        }
+        recursive(id);
+        return found
+    }
+    
     function stringifyStyle(style, domObject, domElement) {
         if (typeof style === "string") return domEvaluateString(style, domObject);
         try {
@@ -180,9 +270,10 @@ function Flash (dom, doc) {
                     style[itemTmp] = style[itemTmp]+"px";
                 }
                 if (typeof style[itemTmp] === "string") 
-                    style[itemTmp] = typeof domEvaluateString(style[itemTmp], domObject) === 'number' ?
-                        domEvaluateString(style[itemTmp], domObject)+"px"
+                    style[itemTmp] = typeof domEvaluateString(style[itemTmp], domObject) === 'number' 
+                        ? domEvaluateString(style[itemTmp], domObject)+"px"
                         : domEvaluateString(style[itemTmp], domObject);
+
                 if (typeof style[itemTmp] === "object") {
                     const props = style[itemTmp];
                     const delay = props.delay || 0;
@@ -224,7 +315,7 @@ function Flash (dom, doc) {
                                 },1)
                             },delay)
                         } catch (e) {
-                            console.error("Flash::", "please check your range. It must have at least 2 elements.");
+                            console.error("Flash::", e);
                         }
                     }
                 }
@@ -326,50 +417,9 @@ const __t = FlashTransform = function (htmlQueryReference, movementsObject, dura
     }
 }
 
-const __f = FlashFind = function (id) {
-    var found = false
-    function recursive(id, obj, index, parent) {
-        const jg = obj ? obj : window.flashGlobal;
-        var parent = parent ? parent : null;
-        if (typeof jg === "object" && jg.length > 0) {
-            jg.map(function(e,k){
-                if (e.id === id) {
-                    try {
-                        e.width = "width" in e
-                            ? e.width
-                            : e.element.offsetWidth;
-                        e.height = "height" in e
-                            ? e.height
-                            : e.element.offsetHeight;
-                    } catch (e) {}
-                    try {
-                        if (parent) {
-                            parent.width = "width" in parent
-                                ? parent.width
-                                : parent.element.offsetWidth;
-                            parent.height = "height" in parent
-                                ? parent.height
-                                : parent.element.offsetHeight;
-                        }
-                        e.parent = parent;
-                    } catch (e) {}
-                    found = e;
-                } else if ("childs" in e) {
-                    recursive(id, e.childs, index, e)
-                } else {
-                    return false
-                }
-            })
-        }
-    }
-    recursive(id);
-    return found
-}
-
 const __i = FlashInclude = function(filePath) {
     if (window.location.protocol !== "file:") {
-        const splice = filePath.split(".");
-        filePath = splice.length>1 ? filePath : filePath+".js";
+        filePath = filePath.indexOf(".js") !== -1 ? filePath : filePath+".js";
         var req = new XMLHttpRequest();
         req.open("GET", filePath, false); // 'false': synchronous.
         req.send(null);
@@ -379,19 +429,18 @@ const __i = FlashInclude = function(filePath) {
         newScriptElement.text = req.responseText;
         headElement.appendChild(newScriptElement);
     } else {
-        console.error("Jdom::", "you cannot use FlashModule outside server");
+        console.error("Flash::", "you cannot use FlashModule outside server");
         return false;
     } 
 };
 
 const __m = FlashModule = function(filePath) {
     if (window.location.protocol !== "file:") {
-        const splice = filePath.split(".");
-        filePath = splice.length>1 ? filePath : filePath+".json";
+        filePath = filePath.indexOf(".json") !== -1 ? filePath : filePath+".json";
         // Load json file;
         function FlashloadTextFileAjaxSync(filePath, mimeType) {
             var xmlhttp=new XMLHttpRequest();
-            xmlhttp.open("GET",filePath+"?updated="+(new Date().getTime()),false);
+            xmlhttp.open("GET",filePath+'?updated='+(new Date().getTime()),false);
             if (mimeType != null) {
                 if (xmlhttp.overrideMimeType) {
                     xmlhttp.overrideMimeType(mimeType);
@@ -410,10 +459,87 @@ const __m = FlashModule = function(filePath) {
         // Parse json
         return JSON.parse(json);
     } else {
-        console.error("Jdom::", "you cannot use FlashModule outside server");
+        console.error("Flash::", "you cannot use FlashModule outside server");
         return false;
     } 
 };
+
+var FlashParseStyle = function (style) {
+    if (typeof style === "string") {
+        var s = style.split(";");
+        var r = {};
+        s.map(function(e){
+            const prop = e
+                .split(":")[0]
+                .split("-")
+                .map(function(a,k){
+                    if (k>0) 
+                        return a.charAt(0).toUpperCase()+a.substr(1)
+                    else
+                        return a
+                })
+                .join("");
+            const value = e
+                .split(":")[1]
+            r[prop] = value
+        })
+        return r;
+    } else {
+        return style;
+    }
+}
+
+var FlashStyle = function (css) {
+    setTimeout(function(){
+        css = FlashParseStyle(css);
+        let style = "";
+        function recursive (obj) {
+            obj = obj ? obj : css;
+            try {
+                Object.keys(obj).map(function(item, k){
+                    let val = JSON.stringify(obj[item]).replace(/\"/g,"");
+                    const match = val.match(/([A-Z])/g);
+                    if (match) match.map(function(m){
+                        val = val.replace(m,"-"+m.toLowerCase());
+                    })
+                    style += item+": "+val;
+                })
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        recursive();
+    
+        if (css) {
+            head = document.head || document.getElementsByTagName('head')[0],
+            styleTag = document.createElement('style');
+            styleTag.type = 'text/css';
+            if (styleTag.styleSheet){
+                // This is required for IE8 and below.
+                styleTag.styleSheet.cssText = JSON.stringify(style);
+            } else {
+                styleTag.appendChild(document.createTextNode(style));
+            }
+            head.appendChild(styleTag);
+        }
+    },50)
+}
+
+Array.prototype.findBy = function (property, value) {
+    let found = []
+    let findDeep = function(data, property) {
+        return data.some(function(e, k, j) {
+            if(e[property] == value) {
+                found.push(e);
+                //return true;
+            } else if (e.childs) {
+                return findDeep(e.childs, property)
+            }
+        })
+    }
+    findDeep(this, property)
+    return found.length > 0 ? found : false;
+}
 
 Array.prototype.find = function (id) {
     let found = false
@@ -431,10 +557,23 @@ Array.prototype.find = function (id) {
     return found;
 }
 
+Promise.prototype.init = function (settings) {
+    try {
+        document.title = settings.title || null;
+        settings.style = settings.style ? settings.style : {};
+        let doc = window.flashDocChoosed;
+        Object.keys(settings.style).map(function(prop){
+            doc.style[prop] = settings.style[prop]
+        })
+    } catch (e) {
+
+    }
+}
+
 Promise.prototype.prettify = function () {
     FlashPrettify()
 }
 
-setInterval(function(){
+window.onresize = function(){
     SCREEN = FlashDetectScreenSize ();
-},1)
+}
