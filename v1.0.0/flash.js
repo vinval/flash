@@ -557,6 +557,16 @@ Array.prototype.find = function (id) {
     return found;
 }
 
+Array.prototype.query = function (query) {
+    let found = []
+    const self = this;
+    let all = document.querySelectorAll(query);
+    [].map.call(all, (e)=>{
+        found.push(self.find(e.id));
+    })
+    return found.length ? found : false;
+}
+
 Promise.prototype.init = function (settings) {
     try {
         document.title = settings.title || null;
