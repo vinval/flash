@@ -1,6 +1,6 @@
 <img width="100px" src="./flash.svg"/>{ FLASH.js }
 # INTRODUCTION
-###### v1.0.0 last update 02/23/2019
+###### v1.0.0 last update 03/06/2019
 ## Develope html and css simply coding javascript
 ---
 #### First of all declare the script reference into your main html then write your script after the body tag.
@@ -123,7 +123,7 @@ new Flash([
 |element        |HTMLElement      |
 |parent         |object           |
 
-###### *Flash has a global object that returns after then method called scope (or whatever you want) where you retreive each object with element property that contains the real HTMLElement and his parent object
+###### *Flash has a global object that returns after then method called globalScope where you retreive each object with element property that contains the real HTMLElement and his parent object
 
 ---
 # FROM OBJECT TO HTMLElement
@@ -215,6 +215,28 @@ new Flash([
     }
 ]).then((scope)=>{
     console.log(scope.findBy("tag","button")) //return [{...button1},{...button2}]
+})
+```
+#### QUERY
+```javascript
+/*
+    you can use scope.query(element) to find objects list and realtime change DOM Elements
+*/
+new Flash([
+    {
+        class: "main",
+        html: "don't search me!"
+        childs: [
+            {
+                id: "find-1"
+            },
+            {
+                id: "find-2"
+            }
+        ]
+    {
+]).then((scope)=>{
+    console.log(scope.query(".main #find-1")) //return [{...find-1}]
 })
 ```
 ##### returns an objects array of elements based on ID with self and parent properties inside scope
